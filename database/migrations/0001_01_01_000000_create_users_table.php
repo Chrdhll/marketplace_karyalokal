@@ -17,6 +17,20 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', ['admin', 'client', 'freelancer'])->default('client');
+
+            // Kolom Profil
+            $table->string('profile_picture_path')->nullable();
+            $table->string('headline')->nullable();
+            $table->text('bio')->nullable();
+            $table->string('portfolio')->nullable();
+            $table->string('cv_file_path')->nullable();
+            $table->string('location')->nullable();
+            $table->string('company_name')->nullable();
+
+            $table->decimal('rating_average', 2, 1)->nullable();
+            $table->unsignedInteger('review_count')->default(0);
+
             $table->rememberToken();
             $table->timestamps();
         });
