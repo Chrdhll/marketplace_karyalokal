@@ -9,4 +9,11 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateReview extends CreateRecord
 {
     protected static string $resource = ReviewResource::class;
+
+     protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
+
+
