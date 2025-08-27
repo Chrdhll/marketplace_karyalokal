@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'client', 'freelancer'])->default('client');
 
+
+            $table->enum('profile_status', ['pending', 'approved', 'rejected'])->default('pending');
+
             // Kolom Profil
             $table->string('profile_picture_path')->nullable();
             $table->string('headline')->nullable();

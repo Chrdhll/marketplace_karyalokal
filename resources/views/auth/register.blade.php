@@ -1,4 +1,4 @@
-<x-guest-layout>
+{{-- <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -69,4 +69,91 @@
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+</x-guest-layout> --}}
+
+@extends('layouts.template')
+
+@section('title', 'Register')
+
+@section('content')
+
+    <section class="login_box_area section_gap mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="login_box_img">
+                        <img class="img-fluid" src="/assets/img/login.jpg" alt="">
+                        <div class="hover">
+                            <h4>Sudah punya akun?</h4>
+                            <p>Masuk dan lanjutkan proyek hebatmu bersama kami.</p>
+                            <a class="primary-btn" href="{{ route('login') }}">Login Sekarang</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="login_form_inner" id="register-form">
+                        <h3>Buat Akun Baru</h3>
+
+                        <form class="row login_form" action="{{ route('register') }}" method="POST"
+                            id="contactFormRegister">
+                            @csrf
+
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    name="name" placeholder="Nama Lengkap" value="{{ old('name') }}" required>
+                                @error('name')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                    name="email" placeholder="Alamat Email" value="{{ old('email') }}" required>
+                                @error('email')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    name="password" placeholder="Password" required>
+                                @error('password')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <input type="password" class="form-control" name="password_confirmation"
+                                    placeholder="Konfirmasi Password" required>
+                            </div>
+                            
+                            <div class="col-md-12 form-group">
+                                {{-- Menggunakan class is-invalid dari Bootstrap jika ada error --}}
+                                <select class="form-control @error('role') is-invalid @enderror" name="role" required>
+                                    <option value="">-- Pilih Role --</option>
+
+                                    {{-- Menggunakan 'client' agar konsisten dengan backend sebelumnya --}}
+                                    <option value="client" {{ old('role') == 'client' ? 'selected' : '' }}>
+                                        Klien (Pencari Jasa)
+                                    </option>
+                                    <option value="freelancer" {{ old('role') == 'freelancer' ? 'selected' : '' }}>
+                                        Freelancer (Penyedia Jasa)
+                                    </option>
+                                </select>
+
+                                @error('role')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <button type="submit" class="primary-btn">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+@endsection

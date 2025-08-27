@@ -23,6 +23,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role',
         'google_id',
+        'profile_status',
+        'profile_picture_path',
+        'headline',
+        'bio',
+        'portfolio',
+        'cv_file_path',
+        'location',
+        'company_name',
+        'rating_average',
+        'review_count',
     ];
 
     /**
@@ -64,7 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Order::class, 'client_id');
     }
-    
+
     // Relasi untuk Ulasan
     public function reviewsGiven()
     {

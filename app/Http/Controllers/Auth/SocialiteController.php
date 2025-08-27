@@ -3,9 +3,13 @@
 // app/Http/Controllers/Auth/SocialiteController.php
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Log;   
+use Illuminate\Support\Str; 
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -23,33 +27,35 @@ class SocialiteController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
 
-            // Cari user berdasarkan google_id. Jika tidak ada, buat instance baru (tapi jangan simpan dulu).
-            $user = User::firstOrNew(['google_id' => $googleUser->getId()]);
+            // Langkah 1: Cari user berdasarkan EMAIL, bukan google_id
+            $user = User::where('email', $googleUser->getEmail())->first();
 
-            // Isi atau update data user
-            $user->name = $googleUser->getName();
-            $user->email = $googleUser->getEmail();
+            if ($user) {
+                // Cukup update google_id-nya jika masih kosong, lalu simpan.
+                // Tidak ada update password atau data lain yang berisiko.
+                if (!$user->google_id) {
+                    $user->google_id = $googleUser->getId();
+                    $user->save();
+                }
 
-            // Jika ini user baru, set role default.
-            if (!$user->exists) {
-                $user->role = 'client';
+                // Langkah 2B: Jika user BELUM ADA
+            } else {
+                $user = User::create([
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'google_id' => $googleUser->getId(),
+                    'role' => 'client', // Role default untuk pendaftar baru via Google
+                    'email_verified_at' => now(),
+                    'password' => Hash::make(Str::random(24))
+                ]);
             }
 
-            // Kunci utamanya di sini:
-            // Jika email user ini belum terverifikasi, langsung verifikasi sekarang.
-            if (!$user->email_verified_at) {
-                $user->email_verified_at = now();
-            }
-
-            // Simpan semua perubahan (baik untuk user baru maupun lama) ke database.
-            $user->save();
-
-            // Login-kan user.
+            // Langkah 3: Login-kan user dan arahkan ke dashboard
             Auth::login($user);
-
-            return redirect('/');
+            return redirect()->intended('/');
         } catch (\Exception $e) {
-            // Jika ada error lain, redirect ke login
+            // Jika ada error, catat errornya (opsional) dan redirect
+            Log::error($e->getMessage());
             return redirect('/login')->with('error', 'Login dengan Google gagal, silakan coba lagi.');
         }
     }

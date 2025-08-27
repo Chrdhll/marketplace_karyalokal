@@ -13,6 +13,7 @@ class Gig extends Model
         'title',
         'description',
         'price',
+        'service',
         'category_id',
         'user_id',
         'cover_image_path',
