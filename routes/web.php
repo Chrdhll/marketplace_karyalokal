@@ -2,9 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicGigController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Freelancer\GigController;
+use App\Http\Controllers\PublicFreelancerController;
 use App\Http\Controllers\Freelancer\ProfilFreelanceController;
 
 // Route::get('/', function () {
@@ -18,16 +22,27 @@ Route::get('/category', [PageController::class, 'category'])->name('category');
 Route::get('/confirmation', [PageController::class, 'confirmation'])->name('confirmation');
 Route::get('/', [PageController::class, 'index'])->name('index');
 
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+
 Route::post('/contact', [PageController::class, 'contactProccess'])->name('contact-proccess');
+
+Route::get('/freelancers/{user}', [PublicFreelancerController::class, 'show'])->name('public.freelancer.show');
+
+Route::get('/gigs/{gig}', [PublicGigController::class, 'show'])->name('public.gigs.show');
 
 // Route::get('/', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth','verified')->group(function () {
+Route::middleware('auth', 'verified')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Route untuk menampilkan daftar pesanan milik klien
+    Route::get('/my-orders', [OrderController::class, 'index'])->name('order.index');
+    // Route untuk memproses pembuatan pesanan baru
+    Route::post('/order/{gig}', [OrderController::class, 'store'])->name('order.store');
 });
 
 Route::middleware(['auth'])->prefix('freelancer')->name('freelancer.')->group(function () {
