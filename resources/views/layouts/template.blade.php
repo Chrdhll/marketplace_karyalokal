@@ -102,36 +102,38 @@
                                         @elseif (auth()->user()->role == 'client')
                                             {{-- Jika role adalah client, arahkan ke profil breeze --}}
                                             <li class="nav-item"><a class="nav-link" href="{{ route('profile.edit') }}">Pengaturan Akun</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="{{ route('order.index') }}">Pesanan Saya</a></li>
                                         @elseif (auth()->user()->role == 'admin')
                                             {{-- Jika role adalah admin, arahkan ke dashboard admin --}}
                                             <li class="nav-item"><a class="nav-link" href="/admin">Dashboard Admin</a></li> @endif
 
-                                             @if (auth()->user()->role == 'freelancer' && auth()->user()->profile_status == 'approved')
+                                            @if (auth()->user()->role == 'freelancer' && auth()->user()->profile_status == 'approved')
                                                     <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.gigs.index') }}">Kelola Jasa (Gigs)</a></li>
-                                                @endif
+                                                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.orders.index') }}">Pesanan Masuk</a></li>
+                                            @endif
                                         {{-- TOMBOL LOGOUT --}}
                             
                                         <li class="nav-item">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                   <a class="nav-link" href="{{ route('logout') }}" 
-                                    onclick="event.preventDefault(); this.closest('form').submit();">
-                                        Logout
-                                    </a>
-                                </form>
-                                </li>
-                                </ul>
-                                </li>
-                            @else
-                                {{-- Jika user BELUM login (sebagai guest), tampilkan tombol Login --}}
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}"
-                                        style="background-color: #ffba00; color: white; padding: 6px 20px;">
-                                        Login
-                                    </a>
-                                </li>
-                              
-                            @endauth
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <a class="nav-link" href="{{ route('logout') }}"
+            onclick="event.preventDefault(); this.closest('form').submit();">
+            Logout
+        </a>
+    </form>
+    </li>
+    </ul>
+    </li>
+@else
+    {{-- Jika user BELUM login (sebagai guest), tampilkan tombol Login --}}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('login') }}"
+            style="background-color: #ffba00; color: white; padding: 6px 20px;">
+            Login
+        </a>
+    </li>
+
+@endauth
 
 </ul>
 <ul class="nav navbar-nav navbar-right">

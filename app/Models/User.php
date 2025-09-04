@@ -75,6 +75,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Order::class, 'client_id');
     }
 
+    /**
+     * Relasi untuk mengambil pesanan di mana user ini adalah FREELANCER.
+     * Ini yang menyebabkan error.
+     */
+    public function ordersAsFreelancer()
+    {
+        return $this->hasMany(Order::class, 'freelancer_id');
+    }
+
     // Relasi untuk Ulasan
     public function reviewsGiven()
     {

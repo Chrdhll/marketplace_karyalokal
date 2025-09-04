@@ -8,10 +8,12 @@
             <div class="row s_product_inner">
                 <div class="col-lg-6">
                     {{-- <div class="s_Product_carousel"> --}}
-                        <div class="single-prd-item">
-                            <img class="img-fluid" src="{{ $gig->cover_image_path ? Storage::url($gig->cover_image_path) : 'https://via.placeholder.com/600x600' }}" alt="{{ $gig->title }}">
-                        </div>
-                        {{-- Kamu bisa tambahkan carousel untuk gambar-gambar lain jika ada --}}
+                    <div class="single-prd-item">
+                        <img class="img-fluid"
+                            src="{{ $gig->cover_image_path ? Storage::url($gig->cover_image_path) : 'https://via.placeholder.com/600x600' }}"
+                            alt="{{ $gig->title }}">
+                    </div>
+                    {{-- Kamu bisa tambahkan carousel untuk gambar-gambar lain jika ada --}}
                     {{-- </div> --}}
                 </div>
                 <div class="col-lg-5 offset-lg-1">
@@ -24,8 +26,21 @@
                         </ul>
                         <p>{{ \Illuminate\Support\Str::limit($gig->description, 200) }}</p>
                         <div class="card_area d-flex align-items-center">
-                            {{-- Tombol ini akan kita fungsikan di langkah berikutnya --}}
-                            <a class="primary-btn" href="#">Pesan Jasa Ini</a>
+                            {{-- Cek apakah ada user yang login --}}
+                            @auth
+                                {{-- Tampilkan tombol hanya jika user adalah 'client' DAN bukan pemilik jasa ini --}}
+                                @if (auth()->user()->role == 'client' && auth()->id() !== $gig->user_id)
+                                    <form action="{{ route('order.store', $gig->id) }}" method="POST">
+                                        @csrf
+                                        {{-- Kamu bisa tambahkan textarea di sini jika ingin klien memberi catatan --}}
+                                        {{-- <textarea name="notes" class="form-control mb-3" placeholder="Tulis catatan untuk freelancer..."></textarea> --}}
+                                        <button type="submit" class="btn btn-primary btn-block btn-lg">Pesan Jasa Ini</button>
+                                    </form>
+                                @endif
+                            @else
+                                {{-- Jika user belum login, tampilkan tombol untuk login --}}
+                                <a href="{{ route('login') }}" class="btn btn-primary btn-block btn-lg">Login untuk Memesan</a>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -36,17 +51,19 @@
         <div class="container">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Deskripsi</a>
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                        aria-controls="home" aria-selected="true">Deskripsi</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="review-tab" data-toggle="tab" href="#review" role="tab" aria-controls="review" aria-selected="false">Ulasan ({{ $gig->reviews->count() }})</a>
+                    <a class="nav-link" id="review-tab" data-toggle="tab" href="#review" role="tab"
+                        aria-controls="review" aria-selected="false">Ulasan ({{ $gig->reviews->count() }})</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <p>{!! nl2br(e($gig->description)) !!}</p>
                 </div>
-                
+
                 <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
                     <div class="row">
                         <div class="col-lg-6">
@@ -55,13 +72,16 @@
                                     <div class="review_item">
                                         <div class="media">
                                             <div class="d-flex">
-                                                <img src="{{ $review->client->profile_picture_path ? Storage::url($review->client->profile_picture_path) : 'https://ui-avatars.com/api/?name='.urlencode($review->client->name) }}" alt="{{ $review->client->name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                                                <img src="{{ $review->client->profile_picture_path ? Storage::url($review->client->profile_picture_path) : 'https://ui-avatars.com/api/?name=' . urlencode($review->client->name) }}"
+                                                    alt="{{ $review->client->name }}"
+                                                    style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
                                             </div>
                                             <div class="media-body">
                                                 <h4>{{ $review->client->name }}</h4>
                                                 <div class="rating">
                                                     @for ($i = 1; $i <= 5; $i++)
-                                                        <i class="fa fa-star" style="color: {{ $i <= $review->rating ? '#fbc02d' : '#e0e0e0' }};"></i>
+                                                        <i class="fa fa-star"
+                                                            style="color: {{ $i <= $review->rating ? '#fbc02d' : '#e0e0e0' }};"></i>
                                                     @endfor
                                                 </div>
                                             </div>
@@ -88,4 +108,4 @@
             </div>
         </div>
     </section>
-    @endsection
+@endsection

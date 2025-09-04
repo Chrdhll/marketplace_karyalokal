@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Freelancer\GigController;
 use App\Http\Controllers\PublicFreelancerController;
 use App\Http\Controllers\Freelancer\ProfilFreelanceController;
+use App\Http\Controllers\Freelancer\OrderController as FreelancerOrderController;
+use App\Http\Controllers\ReviewController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -43,13 +45,20 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/my-orders', [OrderController::class, 'index'])->name('order.index');
     // Route untuk memproses pembuatan pesanan baru
     Route::post('/order/{gig}', [OrderController::class, 'store'])->name('order.store');
+
+
+    Route::post('/reviews/{order}', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
-Route::middleware(['auth'])->prefix('freelancer')->name('freelancer.')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('freelancer')->name('freelancer.')->group(function () {
     Route::get('/profil', [ProfilFreelanceController::class, 'edit'])->name('profil.edit');
     Route::put('/profil', [ProfilFreelanceController::class, 'update'])->name('profil.update');
 
     Route::resource('gigs', GigController::class)->middleware('approved.freelancer');
+
+    Route::get('/orders', [FreelancerOrderController::class, 'index'])->name('orders.index');
+
+    Route::patch('/orders/{order}/update-status', [FreelancerOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });
 
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle'])->name('google.redirect');
