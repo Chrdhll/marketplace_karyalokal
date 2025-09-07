@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'approved.freelancer' => CheckApprovedFreelancer::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'midtrans-webhook', // URL yang kita daftarkan di VerifyCsrfToken sebelumnya
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -34,6 +34,7 @@
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
 
+    @stack('scripts')
 </head>
 
 <body>
@@ -109,8 +110,7 @@
 
                                             @if (auth()->user()->role == 'freelancer' && auth()->user()->profile_status == 'approved')
                                                     <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.gigs.index') }}">Kelola Jasa (Gigs)</a></li>
-                                                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.orders.index') }}">Pesanan Masuk</a></li>
-                                            @endif
+                                                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.orders.index') }}">Pesanan Masuk</a></li> @endif
                                         {{-- TOMBOL LOGOUT --}}
                             
                                         <li class="nav-item">
@@ -261,6 +261,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
 <script src="/assets/js/gmaps.min.js"></script>
 <script src="/assets/js/main.js"></script>
+
+@stack('scripts-footer')
 </body>
 
 </html>

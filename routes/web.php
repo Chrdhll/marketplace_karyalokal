@@ -12,6 +12,7 @@ use App\Http\Controllers\PublicFreelancerController;
 use App\Http\Controllers\Freelancer\ProfilFreelanceController;
 use App\Http\Controllers\Freelancer\OrderController as FreelancerOrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\WebhookController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -32,6 +33,9 @@ Route::get('/freelancers/{user}', [PublicFreelancerController::class, 'show'])->
 
 Route::get('/gigs/{gig}', [PublicGigController::class, 'show'])->name('public.gigs.show');
 
+// Route untuk menerima notifikasi dari Midtrans
+Route::post('/midtrans-webhook', [WebhookController::class, 'handle'])->name('midtrans.webhook');
+
 // Route::get('/', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
@@ -44,7 +48,10 @@ Route::middleware('auth', 'verified')->group(function () {
     // Route untuk menampilkan daftar pesanan milik klien
     Route::get('/my-orders', [OrderController::class, 'index'])->name('order.index');
     // Route untuk memproses pembuatan pesanan baru
-    Route::post('/order/{gig}', [OrderController::class, 'store'])->name('order.store');
+    // Route::post('/order/{gig}', [OrderController::class, 'store'])->name('order.store');
+
+    Route::get('/checkout/{gig}', [OrderController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/{gig}', [OrderController::class, 'processCheckout'])->name('checkout.process');
 
 
     Route::post('/reviews/{order}', [ReviewController::class, 'store'])->name('reviews.store');
