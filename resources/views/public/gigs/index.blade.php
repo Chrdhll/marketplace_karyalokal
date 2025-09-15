@@ -13,7 +13,7 @@
                         <a href="{{ route('index') }}">Home<span class="lnr lnr-arrow-right"></span></a>
                         <a href="{{ route('public.gigs.index') }}">Jasa</a>
                         @if ($activeCategory)
-                            <span class="lnr lnr-arrow-right"></span><a href="#">{{ $activeCategory->name }}</a>
+                            <span class="lnr lnr-arrow-right mx-2 text-white"></span><a href="#">{{ $activeCategory->name }}</a>
                         @endif
                     </nav>
                 </div>

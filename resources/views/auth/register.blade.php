@@ -136,12 +136,10 @@
                                     placeholder="Konfirmasi Password" required>
                             </div>
 
-                            <div class="col-md-12 form-group">
-                                {{-- Menggunakan class is-invalid dari Bootstrap jika ada error --}}
+                            {{-- <div class="col-md-12 form-group">
                                 <select class="form-control @error('role') is-invalid @enderror" name="role" required>
                                     <option value="">-- Pilih Role --</option>
 
-                                    {{-- Menggunakan 'client' agar konsisten dengan backend sebelumnya --}}
                                     <option value="client" {{ old('role') == 'client' ? 'selected' : '' }}>
                                         Klien (Pencari Jasa)
                                     </option>
@@ -153,7 +151,7 @@
                                 @error('role')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-12 form-group">
                                 <button type="submit" class="primary-btn">Register</button>

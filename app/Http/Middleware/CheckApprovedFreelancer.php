@@ -14,9 +14,9 @@ class CheckApprovedFreelancer
         $user = Auth::user();
 
         // Cek jika user sudah login, rolenya freelancer, DAN statusnya approved
-        if ($user && $user->role == 'freelancer' && $user->profile_status == 'approved') {
-            return $next($request); // Jika ya, izinkan masuk
-        }
+         if (Auth::check() && Auth::user()->isApprovedFreelancer()) {
+        return $next($request);
+    }
 
         // Jika tidak, tendang kembali ke halaman profil dengan pesan error
         return redirect()->route('freelancer.profil.edit')

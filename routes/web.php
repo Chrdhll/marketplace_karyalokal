@@ -69,8 +69,8 @@ Route::middleware('auth', 'verified')->group(function () {
     // Route untuk memproses pembuatan pesanan baru
     // Route::post('/order/{gig}', [OrderController::class, 'store'])->name('order.store');
 
-    Route::get('/checkout/{gig}', [OrderController::class, 'checkout'])->name('checkout')->middleware('role.client');
-    Route::post('/checkout/{gig}', [OrderController::class, 'processCheckout'])->name('checkout.process')->middleware('role.client');
+    Route::get('/checkout/{gig}', [OrderController::class, 'checkout'])->name('checkout')->middleware('can.order');
+    Route::post('/checkout/{gig}', [OrderController::class, 'processCheckout'])->name('checkout.process')->middleware('can.order');
 
 
     Route::post('/reviews/{order}', [ReviewController::class, 'store'])->name('reviews.store');
@@ -94,12 +94,12 @@ Route::middleware(['auth', 'verified'])->prefix('freelancer')->name('freelancer.
 
     Route::resource('gigs', GigController::class)->middleware('approved.freelancer');
 
-    Route::get('/orders', [FreelancerOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders', [FreelancerOrderController::class, 'index'])->name('orders.index')->middleware('approved.freelancer');
 
     Route::post('/orders/{order}/deliver', [FreelancerOrderController::class, 'deliverWork'])->name('orders.deliver');
     Route::patch('/orders/{order}/update-status', [FreelancerOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('approved.freelancer');
 });
 
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle'])->name('google.redirect');

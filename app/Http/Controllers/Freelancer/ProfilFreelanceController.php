@@ -24,86 +24,69 @@ class ProfilFreelanceController extends Controller
 
     // app/Http/Controllers/Freelancer/ProfilFreelanceController.php
 
-    public function update(Request $request)
-    {
-        $user = Auth::user();
-        // Validasi sudah benar, kita hanya perlu menambahkan 'keahlian'
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255',
-            'headline' => 'nullable|string|max:255',
-            'bio' => 'nullable|string|max:1000',
-            'location' => 'nullable|string|max:255',
-            'company_name' => 'nullable|string|max:255',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'cv_file_path' => [
-                // Wajib diisi HANYA JIKA kolom cv_file_path di database masih kosong
-                Rule::requiredIf(!$user->cv_file_path),
-                'nullable', // Tetap nullable untuk update
-                'file',
-                'mimes:pdf',
-                'max:5120' // 5MB
-            ],
+   public function update(Request $request)
+{
+    $user = Auth::user();
 
-            // ATURAN VALIDASI PINTAR UNTUK PORTOFOLIO
-            'portfolio' => [
-                // Wajib diisi HANYA JIKA kolom portfolio di database masih kosong
-                Rule::requiredIf(!$user->portfolio),
-                'nullable',
-                'file',
-                'mimes:pdf',
-                'max:5120' // 5MB
-            ],
-        ]);
+    // Cek apakah ini submission pertama kali (sebelumnya belum ada bio)
+    $isFirstSubmission = !$user->bio; 
+    
+    // VALIDASI YANG DISEMPURNAKAN
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'username' => [
+            'required',
+            'string',
+            'max:50',
+            'alpha_dash', // Hanya boleh huruf, angka, strip (-), dan underscore (_)
+            Rule::unique('users')->ignore($user->id), // Unik, kecuali untuk user ini sendiri
+        ],
+        'email' => [
+            'required',
+            'email',
+            Rule::unique('users')->ignore($user->id), // Email juga harus unik
+        ],
+        'headline' => 'nullable|string|max:255',
+        'bio' => 'nullable|string|max:1000',
+        'location' => 'nullable|string|max:255',
+        'company_name' => 'nullable|string|max:255',
+        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'cv_file_path' => [ 
+            Rule::requiredIf(!$user->cv_file_path),
+            'nullable', 'file', 'mimes:pdf', 'max:5120'
+        ],
+        'portfolio' => [
+            Rule::requiredIf(!$user->portfolio),
+            'nullable', 'file', 'mimes:pdf', 'max:5120'
+        ],
+    ]);
 
-        $user = Auth::user();
+    // Mengambil semua data input teks
+    $dataToUpdate = $request->only([
+        'name', 'username', 'email', 'headline', 'bio', 'keahlian', 'location', 'company_name'
+    ]);
 
-        // 1. LENGKAPI SEMUA DATA TEKS DARI VALIDASI
-        $dataToUpdate = [
-            'name' => $request->input('name'),
-            'username' => $request->input('username'),
-            'headline' => $request->input('headline'),
-            'bio' => $request->input('bio'),
-            'company_name' => $request->input('company_name'),
-            'location' => $request->input('location'),
-            'email' => $request->input('email'),
-        ];
-
-        // 2. LOGIKA UNTUK RESUBMIT SETELAH DITOLAK
-        // Jika profil sebelumnya ditolak, ubah statusnya jadi pending lagi untuk direview ulang
-        if ($user->profile_status == 'rejected') {
-            $dataToUpdate['profile_status'] = 'pending';
-        }
-
-        // 3. TAMBAHKAN HANDLER UNTUK SEMUA FILE
-
-        // Handle upload Foto Profil
-        if ($request->hasFile('profile_picture')) {
-            if ($user->profile_picture_path) {
-                Storage::disk('public')->delete($user->profile_picture_path);
-            }
-            $dataToUpdate['profile_picture_path'] = $request->file('profile_picture')->store('profile-pictures', 'public');
-        }
-
-        // Handle upload Portofolio
-        if ($request->hasFile('portfolio')) {
-            if ($user->portfolio) {
-                Storage::disk('public')->delete($user->portfolio);
-            }
-            $dataToUpdate['portfolio'] = $request->file('portfolio')->store('portfolios', 'public');
-        }
-
-        // Handle upload CV
-        if ($request->hasFile('cv_file_path')) {
-            if ($user->cv_file_path) {
-                Storage::disk('public')->delete($user->cv_file_path);
-            }
-            $dataToUpdate['cv_file_path'] = $request->file('cv_file_path')->store('cvs', 'public');
-        }
-        // Langsung update data user
-        $user->update($dataToUpdate);
-
-        return redirect()->route('freelancer.profil.edit')->with('success', 'Profil berhasil diperbarui!');
+    // LOGIKA STATUS BARU
+    if ($isFirstSubmission) {
+        $dataToUpdate['profile_status'] = 'pending';
     }
+
+    // HANDLE FILE UPLOAD
+    if ($request->hasFile('profile_picture')) {
+        if ($user->profile_picture_path) Storage::disk('public')->delete($user->profile_picture_path);
+        $dataToUpdate['profile_picture_path'] = $request->file('profile_picture')->store('profile-pictures', 'public');
+    }
+    if ($request->hasFile('cv_file_path')) { 
+        if ($user->cv_file_path) Storage::disk('public')->delete($user->cv_file_path);
+        $dataToUpdate['cv_file_path'] = $request->file('cv_file_path')->store('cvs', 'public');
+    }
+    if ($request->hasFile('portfolio')) {
+        if ($user->portfolio) Storage::disk('public')->delete($user->portfolio);
+        $dataToUpdate['portfolio'] = $request->file('portfolio')->store('portfolios', 'public');
+    }
+
+    $user->update($dataToUpdate);
+    
+    return redirect()->route('freelancer.profil.show')->with('success', 'Profil berhasil diperbarui!');
+}
 }

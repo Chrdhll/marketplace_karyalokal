@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role',
         'google_id',
+        'email_verified_at',
         'profile_status',
         'profile_picture_path',
         'headline',
@@ -108,5 +109,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function wishlistedGigs()
     {
         return $this->belongsToMany(Gig::class, 'gig_user');
+    }
+
+    public function isApprovedFreelancer(): bool
+    {
+        return $this->role === 'freelancer' && $this->profile_status === 'approved';
     }
 }

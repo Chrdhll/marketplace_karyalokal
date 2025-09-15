@@ -22,6 +22,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
 
@@ -33,13 +34,15 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('role', 'freelancer');
+        return parent::getEloquentQuery()->where(function ($query) {
+            $query->where('role', 'freelancer')
+                ->orWhereNotNull('profile_status');
+        });
     }
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('role', 'freelancer')
-            ->where('profile_status', 'pending')
+        return static::getModel()::where('profile_status', 'pending')
             ->count();
     }
 
@@ -78,7 +81,14 @@ class UserResource extends Resource
                                     'approved' => 'Approved',
                                     'rejected' => 'Rejected',
                                 ])
-                                ->required(),
+                                ->required()
+                                ->live() // <-- Tambahkan ini
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    // Jika status diubah menjadi 'approved', otomatis ubah role jadi 'freelancer'
+                                    if ($state === 'approved') {
+                                        $set('role', 'freelancer');
+                                    }
+                                }),
 
                             Select::make('role')
                                 ->options([

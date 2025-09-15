@@ -1,4 +1,4 @@
-@extends('layouts.template')
+@extends('layouts.freelancer')
 
 @section('title', 'Edit Profil Freelancer')
 
@@ -9,9 +9,36 @@
             <div class="container">
                 {{-- Notifikasi sukses setelah update --}}
                 @if (session('success'))
-                    <div class="alert alert-success shadow-sm mt-4">{{ session('success') }}</div>
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 @endif
 
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        {{-- Ini isi pesannya --}}
+                        {{ session('error') }}
+
+                        {{-- Ini tombol silangnya --}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+
+                @if (!auth()->user()->bio)
+                    <div class="alert alert-info shadow-sm mb-4">
+                        <h4 class="alert-heading">Selamat Datang di KaryaLokal!</h4>
+                        <p>Ini adalah langkah pertamamu untuk memulai perjalanan sebagai freelancer. Lengkapi profilmu
+                            selengkap mungkin untuk menarik perhatian klien.</p>
+                        <hr>
+                        <p class="mb-0">Setelah profilmu dikirim, tim kami akan meninjaunya sebelum ditampilkan di
+                            marketplace.</p>
+                    </div>
+                @endif
                 <div class="card shadow-sm mt-4">
                     <div class="card-body p-4 p-md-5">
 

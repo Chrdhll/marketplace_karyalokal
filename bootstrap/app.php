@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckCanOrder;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\CheckApprovedFreelancer;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware){
         $middleware->alias([
             'approved.freelancer' => \App\Http\Middleware\CheckApprovedFreelancer::class,
-            'role.client' => \App\Http\Middleware\CheckClientRole::class, // <-- TAMBAHKAN INI
+            'can.order' => \App\Http\Middleware\CheckCanOrder::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

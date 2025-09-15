@@ -15,11 +15,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::where('client_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+        $orders = Auth::user()->ordersAsClient()->latest()->paginate(10);
 
-        // Nanti kita akan buat view untuk ini
         return view('orders.index', compact('orders'));
     }
 
@@ -35,9 +32,8 @@ class OrderController extends Controller
     public function processCheckout(Request $request, Gig $gig)
     {
         // 1. Buat pesanan di database dengan status 'pending'
-        $order = Order::create([
+        $order = Auth::user()->ordersAsClient()->create([
             'gig_id' => $gig->id,
-            'client_id' => Auth::id(),
             'freelancer_id' => $gig->user_id,
             'total_price' => $gig->price,
             'status' => 'pending',
@@ -88,6 +84,8 @@ class OrderController extends Controller
         if (Auth::id() !== $order->client_id && Auth::id() !== $order->freelancer_id) {
             abort(403, 'AKSES DITOLAK');
         }
+
+        $order->load(['gig', 'client', 'freelancer', 'messages.user', 'review']);
 
         return view('orders.show', compact('order'));
     }

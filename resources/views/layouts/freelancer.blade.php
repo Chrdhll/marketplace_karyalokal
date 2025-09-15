@@ -32,8 +32,7 @@
     <link rel="stylesheet" href="/assets/css/main.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap4.css" rel="stylesheet">
     <!-- Font Awesome CDN (versi 6) -->
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
 
     @stack('scripts')
 </head>
@@ -58,135 +57,30 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
                         <ul class="nav navbar-nav menu_nav ml-auto">
-                            <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Beranda</a></li>
-                            <li class="nav-item submenu dropdown">
-                                <a href="#" class="nav-link active dropdown-toggle" data-toggle="dropdown"
-                                    role="button" aria-haspopup="true" aria-expanded="false">Cari Freelance</a>
-                                
-                                <ul class="dropdown-menu">
-                                    {{-- MULAI PERULANGAN DI SINI --}}
-                                    @foreach ($sharedCategories as $category)
-                                        <li class="nav-item">
-                                            {{-- Link akan otomatis mengarah ke halaman Gigs yang sudah difilter --}}
-                                            <a class="nav-link" href="{{ route('public.gigs.index', ['category' => $category->slug]) }}">
-                                                {{ $category->name }}
-                                            </a>
-                                        </li> @endforeach
-                                </ul>
+                            <li class="nav-item {{ request()->routeIs('freelancer.dashboard') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('freelancer.dashboard') }}">Dashboard</a>
                             </li>
+                            <li class="nav-item {{ request()->routeIs('freelancer.orders.index') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('freelancer.orders.index') }}">Pesanan Masuk</a>
+                            </li>
+                            <li class="nav-item {{ request()->routeIs('freelancer.gigs.*') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('freelancer.gigs.index') }}">Kelola Jasa</a>
+                            </li>
+                            <li class="nav-item {{ request()->routeIs('freelancer.profil.*') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('freelancer.profil.show') }}">Profil Saya</a>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            {{-- TOMBOL KEMBALI KE MARKETPLACE (MODE KLIEN) --}}
                             <li class="nav-item">
-    <a class="nav-link" href="#about">About Me</a></li>
-    <li class="nav-item submenu dropdown">
-        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-            aria-expanded="false">KaryaLokal Pro</a>
-        <ul class="dropdown-menu">
-            <li class="nav-item"><a class="nav-link" href="">Silver</a></li>
-            <li class="nav-item"><a class="nav-link" href="">Gold</a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="">Diamond</a>
-            </li>
-        </ul>
-    </li>
-
-
-
-    {{-- Cek dulu apakah user sudah login --}}
-    @auth
-        {{-- Jika sudah login, tampilkan item ini --}}
-        <li class="nav-item submenu dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                aria-expanded="false">
-                <span class="ti-user"></span>
-                {{-- Tampilkan nama user yang login --}}
-                Hi, {{ \Illuminate\Support\Str::limit(auth()->user()->username, 10, '...') }}
-            </a>
-            <ul class="dropdown-menu">
-                {{-- MENU KLIEN (Tampil untuk semua yang login) --}}
-                <li class="nav-item"><a class="nav-link" href="{{ route('order.index') }}">Pesanan Saya</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('wishlist.index') }}">Wishlist</a></li>
-
-                {{-- PINTU MASUK KE MODE FREELANCER --}}
-                @if (auth()->user()->isApprovedFreelancer())
-                    {{-- Jika sudah jadi freelancer, tampilkan link ke dasbornya --}}
-                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.dashboard') }}"><b>Dasbor
-                                Freelancer</b></a></li>
-                @else
-                    {{-- Jika masih klien, tampilkan ajakan menjadi freelancer --}}
-                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.profil.edit') }}">Mulai menjual
-                            jasa</a></li>
-                @endif
-                {{-- LOGIKA PEMILIHAN LINK PROFIL --}}
-                {{-- @if (auth()->user()->role == 'freelancer') --}}
-                {{-- Jika role adalah freelancer, arahkan ke profil freelancer --}}
-                {{-- <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.profil.show') }}">Profil Saya</a>
-                    </li> --}}
-                {{-- @elseif (auth()->user()->role == 'client') --}}
-                {{-- Jika role adalah client, arahkan ke profil breeze --}}
-                {{-- <li class="nav-item"><a class="nav-link" href="{{ route('profile.edit') }}">Pengaturan Akun</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('order.index') }}">Pesanan Saya</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('wishlist.index') }}">Wishlist Saya</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.profil.edit') }}">Mulai menjual
-                            jasa</a></li> --}}
-                {{-- @elseif (auth()->user()->role == 'admin')
-                    <li class="nav-item"><a class="nav-link" href="/admin">Dashboard Admin</a></li>
-                @endif --}}
-
-                {{-- @if (auth()->user()->role == 'freelancer' && auth()->user()->profile_status == 'approved')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.gigs.index') }}">Kelola Jasa
-                            (Gigs)
-                        </a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('freelancer.orders.index') }}">Pesanan
-                            Masuk</a>
-                    </li>
-                @endif --}}
-                {{-- TOMBOL LOGOUT --}}
-
-                {{-- MENU UMUM & LOGOUT --}}
-                <li class="nav-item"><a class="nav-link" href="{{ route('profile.edit') }}">Pengaturan Akun</a></li>
-                <li class="nav-item">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <a class="nav-link" href="{{ route('logout') }}"
-                            onclick="event.preventDefault(); this.closest('form').submit();">
-                            Logout
-                        </a>
-                    </form>
-                </li>
-            </ul>
-        </li>
-    @else
-        {{-- Jika user BELUM login (sebagai guest), tampilkan tombol Login --}}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('login') }}"
-                style="background-color: #ffba00; color: white; padding: 6px 20px;">
-                Login
-            </a>
-        </li>
-    @endauth
-
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-        {{-- <li class="nav-item"><a href="#" class="cart"><span class="ti-user"></span></a>
-        </li> --}}
-        <li class="nav-item">
-            <button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
-        </li>
-    </ul>
-    </div>
-    </div>
-    </nav>
-    </div>
-    <div class="search_input" id="search_input_box">
-        <div class="container">
-            <form class="d-flex justify-content-between">
-                <input type="text" class="form-control" id="search_input" placeholder="Search Here">
-                <button type="submit" class="btn"></button>
-                <span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
-            </form>
+                                <a href="{{ route('index') }}" class="primary-btn"
+                                    style="border-radius: 5px; line-height: 38px;">Kembali ke Marketplace</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
         </div>
-    </div>
     </header>
     <!-- End Header Area -->
 
@@ -360,6 +254,6 @@
         });
     </script>
     @stack('scripts-footer')
-    </body>
+</body>
 
 </html>

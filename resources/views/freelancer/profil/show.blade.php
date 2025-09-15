@@ -1,4 +1,4 @@
-@extends('layouts.template')
+@extends('layouts.freelancer')
 
 @section('title', 'Profil Saya')
 
@@ -16,18 +16,6 @@
                             <a href="{{ route('profile.edit') }}" class="btn btn-secondary">Keamanan & Ganti Password</a>
                         </div>
                     </div>
-
-                    {{-- jika freelance baru pertama kali daftar/edit akun --}}
-                    @if (!auth()->user()->bio)
-                        <div class="alert alert-info shadow-sm mb-4">
-                            <h4 class="alert-heading">Selamat Datang di KaryaLokal!</h4>
-                            <p>Ini adalah langkah pertamamu untuk memulai perjalanan sebagai freelancer. Lengkapi profilmu
-                                selengkap mungkin untuk menarik perhatian klien.</p>
-                            <hr>
-                            <p class="mb-0">Setelah profilmu dikirim, tim kami akan meninjaunya sebelum ditampilkan di
-                                marketplace.</p>
-                        </div>
-                    @endif
 
                     @if (auth()->user()->profile_status == 'pending' && auth()->user()->bio)
                         <div class="alert alert-warning shadow-sm" role="alert">
