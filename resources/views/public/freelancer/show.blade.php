@@ -82,6 +82,7 @@
                                  src="{{ $user->profile_picture_path ? Storage::url($user->profile_picture_path) : 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}" 
                                  alt="{{ $user->name }}" style="width: 120px; height: 120px; object-fit: cover;">
                             <h4>{{ $user->name }}</h4>
+                            <p class="text-primary">@ {{ $user->username }}</p>
                             <p>{{ $user->headline }}</p>
                             <p>{{ Str::limit($user->bio, 150) }}</p>
                             <div class="br"></div>

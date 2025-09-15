@@ -107,6 +107,15 @@
                             </div>
 
                             <div class="col-md-12 form-group">
+                                <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                    name="username" placeholder="Username (contoh: karyalokal, tanpa spasi)"
+                                    value="{{ old('username') }}" required>
+                                @error('username')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 form-group">
                                 <input type="email" class="form-control @error('email') is-invalid @enderror"
                                     name="email" placeholder="Alamat Email" value="{{ old('email') }}" required>
                                 @error('email')
@@ -126,7 +135,7 @@
                                 <input type="password" class="form-control" name="password_confirmation"
                                     placeholder="Konfirmasi Password" required>
                             </div>
-                            
+
                             <div class="col-md-12 form-group">
                                 {{-- Menggunakan class is-invalid dari Bootstrap jika ada error --}}
                                 <select class="form-control @error('role') is-invalid @enderror" name="role" required>

@@ -10,7 +10,7 @@
                     <p><strong>Jasa:</strong> {{ $gig->title }}</p>
                     <p><strong>Freelancer:</strong> {{ $gig->user->name }}</p>
                     <p><strong>Harga:</strong> Rp {{ number_format($gig->price, 0, ',', '.') }}</p>
-                    <form action="{{ route('checkout.process', $gig->id) }}" method="POST">
+                    <form action="{{ route('checkout.process', $gig->id) }}" method="POST" id="checkout-form">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-lg">Lanjutkan ke Pembayaran</button>
                     </form>
@@ -18,4 +18,14 @@
             </div>
         </div>
     </section>
+
+    @push('scripts-footer')
+        <script>
+            document.getElementById('checkout-form').addEventListener('submit', function(e) {
+                const button = e.target.querySelector('button[type="submit"]');
+                button.disabled = true;
+                button.textContent = 'Memproses...';
+            });
+        </script>
+    @endpush
 @endsection

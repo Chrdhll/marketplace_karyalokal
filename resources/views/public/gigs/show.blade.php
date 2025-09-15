@@ -65,7 +65,7 @@
                                     </td>
                                     <td>
                                         <h5><a
-                                                href="{{ route('public.freelancer.show', $gig->user->id) }}">{{ $gig->user->name }}</a>
+                                                href="{{ route('public.freelancer.show', $gig->user->username) }}">{{ $gig->user->name }}</a>
                                         </h5>
                                     </td>
                                 </tr>

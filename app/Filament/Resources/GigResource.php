@@ -26,7 +26,7 @@ class GigResource extends Resource
                 Forms\Components\TextInput::make('user_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('service')
+                Forms\Components\TextInput::make('category_id')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('title')
@@ -62,7 +62,7 @@ class GigResource extends Resource
                 Tables\Columns\TextColumn::make('user_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('service')
+                Tables\Columns\TextColumn::make('Kategori_id')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),

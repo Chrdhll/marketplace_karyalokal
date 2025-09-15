@@ -17,7 +17,7 @@ class SearchController extends Controller
             $q->where('profile_status', 'approved');
         })->where(function($q) use ($query) {
             $q->where('title', 'like', "%{$query}%")
-              ->orWhere('service', 'like', "%{$query}%");
+              ->orWhere('category', 'like', "%{$query}%");
         })->get();
 
         // Cari di tabel Users (berdasarkan nama atau headline freelancer)

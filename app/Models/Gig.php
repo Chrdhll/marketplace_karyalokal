@@ -13,7 +13,6 @@ class Gig extends Model
         'title',
         'description',
         'price',
-        'service',
         'category_id',
         'user_id',
         'cover_image_path',
@@ -22,7 +21,7 @@ class Gig extends Model
         'review_count'
     ];
 
-     public function user()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
@@ -36,5 +35,16 @@ class Gig extends Model
     {
         return $this->hasMany(Review::class);
     }
-    
+
+    // Setiap Gig dimiliki oleh satu Kategori
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    // Satu Gig bisa di-wishlist oleh banyak User
+    public function wishlistedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'gig_user');
+    }
 }

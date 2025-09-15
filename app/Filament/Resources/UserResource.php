@@ -9,11 +9,19 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Placeholder;
+use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
 
@@ -39,58 +47,53 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context): bool => $context === 'create')
-                    ->visibleOn('create'),
-                Forms\Components\Select::make('role')
-                    ->options([
-                        'admin' => 'admin',
-                        'client' => 'client',
-                        'freelancer' => 'freelancer',
-                    ])
-                    ->required(),
-                Forms\Components\FileUpload::make('profile_picture_path')
-                    ->label('Foto Profil')
-                    ->disk('public')
-                    ->directory('profile-pictures')
-                    ->image()
-                    ->imageEditor()
-                    ->default(null),
-                Forms\Components\TextInput::make('headline')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\Textarea::make('bio')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('portfolio')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('cv_file_path')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('location')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('company_name')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\Select::make('profile_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
-                    ])
-                    ->required(),
+                Grid::make(3)->schema([
+                    // KOLOM KIRI (2/3 LEBAR): INFORMASI FREELANCER (READ-ONLY)
+                    Section::make('Informasi Freelancer')
+                        ->columnSpan(2)
+                        ->schema([
+                            TextInput::make('name')->disabled(),
+                            TextInput::make('email')->disabled(),
+                            Textarea::make('bio')->disabled()->columnSpanFull(),
+                            Placeholder::make('cv')
+                                ->label('CV & Portofolio')
+                                ->content(function (?User $record): HtmlString {
+                                    if ($record) {
+                                        $cvLink = $record->cv_file_path ? '<a href="' . Storage::url($record->cv_file_path) . '" target="_blank" class="text-primary-600 hover:underline">Lihat CV</a>' : 'Tidak ada CV';
+                                        $portfolioLink = $record->portfolio ? '<a href="' . Storage::url($record->portfolio) . '" target="_blank" class="text-primary-600 hover:underline">Lihat Portofolio</a>' : 'Tidak ada Portofolio';
+                                        return new HtmlString($cvLink . ' | ' . $portfolioLink);
+                                    }
+                                    return new HtmlString('');
+                                }),
+                        ]),
+
+                    // KOLOM KANAN (1/3 LEBAR): AKSI ADMIN
+                    Section::make('Aksi Admin')
+                        ->columnSpan(1)
+                        ->schema([
+                            Select::make('profile_status')
+                                ->label('Status Profil')
+                                ->options([
+                                    'pending' => 'Pending',
+                                    'approved' => 'Approved',
+                                    'rejected' => 'Rejected',
+                                ])
+                                ->required(),
+
+                            Select::make('role')
+                                ->options([
+                                    'client' => 'Client',
+                                    'freelancer' => 'Freelancer',
+                                ])
+                                ->required()
+                                ->disabled(fn(?User $record): bool => $record && $record->id === Auth::id()),
+
+                            // Opsional: Tambahkan field untuk catatan admin
+                            Textarea::make('admin_notes')
+                                ->label('Catatan Admin (Internal)')
+                                ->helperText('Catatan ini hanya bisa dilihat oleh admin lain.')
+                        ]),
+                ]),
             ]);
     }
 

@@ -11,9 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
+    ->withMiddleware(function (Middleware $middleware){
         $middleware->alias([
-            'approved.freelancer' => CheckApprovedFreelancer::class,
+            'approved.freelancer' => \App\Http\Middleware\CheckApprovedFreelancer::class,
+            'role.client' => \App\Http\Middleware\CheckClientRole::class, // <-- TAMBAHKAN INI
         ]);
 
         $middleware->validateCsrfTokens(except: [

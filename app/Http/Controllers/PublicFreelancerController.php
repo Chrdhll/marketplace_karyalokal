@@ -26,8 +26,8 @@ class PublicFreelancerController extends Controller
         
         // Ambil daftar kategori unik yang ditawarkan oleh user ini (untuk sidebar)
         $categories = $user->gigs()
-            ->select('service', DB::raw('count(*) as total'))
-            ->groupBy('service')
+            ->select('category_id', DB::raw('count(*) as total'))
+            ->groupBy('category_id')
             ->orderBy('total', 'desc')
             ->get();
 

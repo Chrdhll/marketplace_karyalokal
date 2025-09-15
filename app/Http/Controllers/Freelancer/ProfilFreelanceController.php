@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class ProfilFreelanceController extends Controller
 {
+    public function show()
+    {
+        $user = Auth::user();
+        return view('freelancer.profil.show', compact('user'));
+    }
     public function edit()
     {
         $user = Auth::user(); // Langsung ambil data user yang login
@@ -20,25 +26,48 @@ class ProfilFreelanceController extends Controller
 
     public function update(Request $request)
     {
+        $user = Auth::user();
         // Validasi sudah benar, kita hanya perlu menambahkan 'keahlian'
         $validated = $request->validate([
+            'email' => 'required|email',
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
             'headline' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:1000',
             'location' => 'nullable|string|max:255',
             'company_name' => 'nullable|string|max:255',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'portfolio' => 'nullable|file|mimes:pdf|max:5120',
-            'cv_file_path' => 'nullable|file|mimes:pdf|max:5120',
+            'cv_file_path' => [
+                // Wajib diisi HANYA JIKA kolom cv_file_path di database masih kosong
+                Rule::requiredIf(!$user->cv_file_path),
+                'nullable', // Tetap nullable untuk update
+                'file',
+                'mimes:pdf',
+                'max:5120' // 5MB
+            ],
+
+            // ATURAN VALIDASI PINTAR UNTUK PORTOFOLIO
+            'portfolio' => [
+                // Wajib diisi HANYA JIKA kolom portfolio di database masih kosong
+                Rule::requiredIf(!$user->portfolio),
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:5120' // 5MB
+            ],
         ]);
 
         $user = Auth::user();
 
         // 1. LENGKAPI SEMUA DATA TEKS DARI VALIDASI
         $dataToUpdate = [
-            'headline' =>$request->input('headline'),
+            'name' => $request->input('name'),
+            'username' => $request->input('username'),
+            'headline' => $request->input('headline'),
             'bio' => $request->input('bio'),
             'company_name' => $request->input('company_name'),
             'location' => $request->input('location'),
+            'email' => $request->input('email'),
         ];
 
         // 2. LOGIKA UNTUK RESUBMIT SETELAH DITOLAK

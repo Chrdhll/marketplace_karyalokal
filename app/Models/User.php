@@ -6,11 +6,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Notifications\CustomVerifyEmail;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'role',
@@ -93,5 +96,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reviewsReceived()
     {
         return $this->hasMany(Review::class, 'freelancer_id');
+    }
+
+    // Satu user bisa mengirim banyak pesan
+    public function orderMessages()
+    {
+        return $this->hasMany(OrderMessage::class);
+    }
+
+    // Satu user bisa punya banyak Gigs di wishlist-nya
+    public function wishlistedGigs()
+    {
+        return $this->belongsToMany(Gig::class, 'gig_user');
     }
 }

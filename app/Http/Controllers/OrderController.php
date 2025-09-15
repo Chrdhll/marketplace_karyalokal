@@ -6,6 +6,7 @@ use App\Models\Gig;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -15,11 +16,11 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::where('client_id', Auth::id())
-                       ->latest()
-                       ->paginate(10);
-        
+            ->latest()
+            ->paginate(10);
+
         // Nanti kita akan buat view untuk ini
-        return view('orders.index', compact('orders')); 
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -31,7 +32,7 @@ class OrderController extends Controller
         return view('orders.checkout', compact('gig'));
     }
 
-     public function processCheckout(Request $request, Gig $gig)
+    public function processCheckout(Request $request, Gig $gig)
     {
         // 1. Buat pesanan di database dengan status 'pending'
         $order = Order::create([
@@ -65,5 +66,51 @@ class OrderController extends Controller
 
         // 5. Kirim Snap Token ke view
         return view('orders.payment', compact('snapToken', 'order'));
+    }
+
+    public function downloadDelivery(Order $order)
+    {
+        // Keamanan: Pastikan yang download adalah klien dari pesanan ini
+        if ($order->client_id !== Auth::id()) {
+            abort(403);
+        }
+        // Keamanan: Pastikan file-nya ada
+        if (!$order->delivered_file_path || !Storage::exists($order->delivered_file_path)) {
+            abort(404);
+        }
+        // Lakukan download
+        return Storage::download($order->delivered_file_path);
+    }
+
+    public function show(Order $order)
+    {
+        // Keamanan: Pastikan yang melihat adalah Klien atau Freelancer dari pesanan ini.
+        if (Auth::id() !== $order->client_id && Auth::id() !== $order->freelancer_id) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        return view('orders.show', compact('order'));
+    }
+
+    public function postMessage(Request $request, Order $order)
+    {
+        // 1. Keamanan: Pastikan yang mengirim pesan adalah Klien atau Freelancer dari pesanan ini.
+        if (Auth::id() !== $order->client_id && Auth::id() !== $order->freelancer_id) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        // 2. Validasi: Pastikan pesan tidak kosong.
+        $request->validate([
+            'message' => 'required|string|max:2000',
+        ]);
+
+        // 3. Simpan pesan ke database menggunakan relasi
+        $order->messages()->create([
+            'user_id' => Auth::id(),
+            'message' => $request->input('message'),
+        ]);
+
+        // 4. Redirect kembali ke halaman detail pesanan
+        return back()->with('success', 'Pesan berhasil terkirim!');
     }
 }

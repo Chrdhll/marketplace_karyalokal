@@ -13,7 +13,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover">
-                                    <thead>
+                                    <thead class="text-center">
                                         <tr>
                                             <th scope="col">ID Pesanan</th>
                                             <th scope="col">Jasa yang Dipesan</th>
@@ -40,71 +40,49 @@
                                                     {{ number_format($order->price ?? $order->total_price, 0, ',', '.') }}
                                                 </td>
                                                 <td>
-                                                    {{-- Memberi warna status agar mudah dikenali --}}
                                                     @if ($order->status == 'pending')
-                                                        <span class="badge badge-warning">Pending</span>
+                                                        <span class="badge badge-secondary">Menunggu Pembayaran</span>
+                                                    @elseif($order->status == 'paid')
+                                                        <span class="badge badge-primary">Dibayar</span>
                                                     @elseif($order->status == 'in_progress')
-                                                        <span class="badge badge-info">In Progress</span>
+                                                        <span class="badge badge-info">Dikerjakan</span>
                                                     @elseif($order->status == 'completed')
-                                                        <span class="badge badge-success">Completed</span>
+                                                        <span class="badge badge-success">Selesai</span>
                                                     @elseif($order->status == 'cancelled')
-                                                        <span class="badge badge-danger">Cancelled</span>
+                                                        <span class="badge badge-danger">Dibatalkan</span>
                                                     @else
-                                                        <span
-                                                            class="badge badge-secondary">{{ ucfirst($order->status) }}</span>
+                                                        <span class="badge badge-dark">{{ ucfirst($order->status) }}</span>
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{-- Jika status masih PENDING --}}
-                                                    @if ($order->status == 'pending')
-                                                        <div class="btn-group">
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                Kelola
+                                                    <div class="d-flex">
+                                                        {{-- Jika status DIBAYAR, tampilkan tombol "Mulai Kerjakan" --}}
+                                                        @if ($order->status == 'paid')
+                                                            <form
+                                                                action="{{ route('freelancer.orders.updateStatus', $order->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <input type="hidden" name="status" value="in_progress">
+                                                                <button type="submit" class="btn btn-sm btn-info">Mulai
+                                                                    Kerjakan</button>
+                                                            </form>
+
+                                                            {{-- Jika status DIKERJAKAN, tampilkan tombol "Selesaikan" --}}
+                                                        @elseif($order->status == 'in_progress')
+                                                            <button type="button" class="btn btn-sm btn-success"
+                                                                data-toggle="modal"
+                                                                data-target="#deliveryModal-{{ $order->id }}">
+                                                                Kirim Hasil Kerja
                                                             </button>
-                                                            <div class="dropdown-menu">
-                                                                {{-- Tombol Terima Pesanan --}}
-                                                                <form
-                                                                    action="{{ route('freelancer.orders.updateStatus', $order->id) }}"
-                                                                    method="POST" class="dropdown-item p-0">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <input type="hidden" name="status"
-                                                                        value="in_progress">
-                                                                    <button type="submit"
-                                                                        class="btn btn-link text-success w-100 text-left">Terima</button>
-                                                                </form>
-                                                                {{-- Tombol Tolak Pesanan --}}
-                                                                <form
-                                                                    action="{{ route('freelancer.orders.updateStatus', $order->id) }}"
-                                                                    method="POST" class="dropdown-item p-0">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <input type="hidden" name="status" value="cancelled">
-                                                                    <button type="submit"
-                                                                        class="btn btn-link text-danger w-100 text-left">Tolak</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
 
-                                                        {{-- Jika status sedang IN PROGRESS --}}
-                                                    @elseif($order->status == 'in_progress')
-                                                        <form
-                                                            action="{{ route('freelancer.orders.updateStatus', $order->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <input type="hidden" name="status" value="completed">
-                                                            <button type="submit" class="btn btn-sm btn-success">Selesaikan
-                                                                Pesanan</button>
-                                                        </form>
-
-                                                        {{-- Jika status sudah COMPLETED atau CANCELLED --}}
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
+                                                            {{-- Jika status PENDING (menunggu pembayaran) atau sudah final --}}
+                                                        @else
+                                                            <span class="text-muted">-</span>
+                                                        @endif
+                                                        <a href="{{ route('order.show', $order->id) }}"
+                                                            class="btn btn-sm btn-outline-primary ml-2">Lihat Detail</a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty
@@ -130,4 +108,47 @@
         </div>
 
     </section>
+
+    @foreach ($orders as $order)
+        @if ($order->status == 'in_progress')
+            <div class="modal fade" id="deliveryModal-{{ $order->id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Kirim Hasil Pekerjaan</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('freelancer.orders.deliver', $order->id) }}" method="POST"
+                            enctype="multipart/form-data">
+                            @csrf
+                            @method('POST')
+                            <div class="modal-body">
+                                <p>Upload file hasil pekerjaan untuk pesanan <strong>#{{ $order->id }} -
+                                        {{ $order->gig->title }}</strong>.</p>
+                                <div class="form-group">
+                                    <label for="delivered_file">File Hasil Kerja (ZIP, PDF, JPG, dll. Max 20MB)</label>
+                                    <div class="custom-file">
+                                        <input type="file" name="delivered_file" class="custom-file-input"
+                                            id="delivered_file" required>
+                                        <label class="custom-file-label" for="delivered_file">Pilih file...</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="delivery_notes">Catatan Pengiriman (Opsional)</label>
+                                    <textarea name="delivery_notes" class="form-control" rows="3"
+                                        placeholder="Contoh: Halo, ini hasil desain logonya dalam format PNG dan AI. Terima kasih!"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-primary">Kirim & Selesaikan Pesanan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endforeach
 @endsection

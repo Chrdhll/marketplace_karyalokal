@@ -7,6 +7,7 @@ use App\Models\Gig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
 
 class GigController extends Controller
 {
@@ -24,7 +25,8 @@ class GigController extends Controller
      */
     public function create()
     {
-        return view('freelancer.gigs.create');
+        $categories = Category::orderBy('name', 'asc')->get();
+        return view('freelancer.gigs.create', compact('categories'));
     }
 
     /**
@@ -38,7 +40,7 @@ class GigController extends Controller
             'price' => 'required|numeric|min:0',
             'estimated_time' => 'required|string|max:50',
             'cover_image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'service' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         if ($request->hasFile('cover_image')) {
@@ -68,7 +70,8 @@ class GigController extends Controller
         if ($gig->user_id !== Auth::id()) {
             abort(403, 'AKSES DITOLAK');
         }
-        return view('freelancer.gigs.edit', compact('gig'));
+        $categories = Category::orderBy('name', 'asc')->get(); // Ambil semua kategori
+        return view('freelancer.gigs.edit', compact('gig', 'categories')); 
     }
 
     /**
@@ -87,10 +90,10 @@ class GigController extends Controller
             'price' => 'required|numeric|min:0',
             'estimated_time' => 'required|string|max:50',
             'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'service' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
-        $dataToUpdate = $request->only(['title', 'description', 'price', 'estimated_time', 'service']);
+        $dataToUpdate = $request->only(['title', 'description', 'price', 'estimated_time', 'category_id']);
 
         if ($request->hasFile('cover_image')) {
             // Hapus gambar lama sebelum upload yang baru

@@ -7,30 +7,6 @@
     <section class="section_gap mt-5">
         <div class="bg-gray-100 py-10">
             <div class="container">
-                @if (auth()->user()->profile_status == 'pending' && auth()->user()->bio)
-                    <div class="alert alert-warning shadow-sm" role="alert">
-                        <h4 class="alert-heading">Menunggu Persetujuan</h4>
-                        <p>Profil Anda telah kami terima dan sedang ditinjau oleh tim admin. Anda tidak dapat mengubah
-                            profil
-                            selama proses peninjauan.</p>
-                    </div>
-                @elseif (auth()->user()->profile_status == 'rejected')
-                    <div class="alert alert-danger shadow-sm" role="alert">
-                        <h4 class="alert-heading">Profil Ditolak</h4>
-                        <p>Maaf, profil Anda belum dapat kami setujui. Silakan periksa kembali kelengkapan data Anda di
-                            bawah
-                            dan kirim ulang dengan menekan tombol "Simpan Profil".</p>
-                    </div>
-                @elseif (auth()->user()->profile_status == 'approved' && auth()->user()->bio)
-                    <div class="alert alert-success shadow-sm" role="alert">
-                        <h4 class="alert-heading">Profil Disetujui!</h4>
-                        <p class="mb-0">Selamat! Profil Anda telah disetujui. Anda sekarang dapat <a
-                                href="{{ route('freelancer.gigs.index') }}" class="alert-link">menambahkan jasa (Gigs)</a>
-                            Anda.
-                        </p>
-                    </div>
-                @endif
-
                 {{-- Notifikasi sukses setelah update --}}
                 @if (session('success'))
                     <div class="alert alert-success shadow-sm mt-4">{{ session('success') }}</div>
@@ -43,6 +19,7 @@
                         <fieldset
                             {{ auth()->user()->profile_status == 'pending' && auth()->user()->bio ? 'disabled' : '' }}>
                             <form action="{{ route('freelancer.profil.update') }}" method="POST"
+                                @if (auth()->user()->profile_status !== 'approved') onsubmit="return confirm('Pastikan semua data sudah terisi dengan benar. Setelah dikirim, profil Anda akan dikunci hingga proses review oleh admin selesai. Lanjutkan?');" @endif
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
@@ -73,12 +50,22 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="headline" class="font-weight-bold">Headline</label>
-                                            <input type="text" name="headline" id="headline"
-                                                placeholder="Contoh: Web Developer & UI/UX Designer"
-                                                value="{{ old('headline', $user->headline) }}"
-                                                class="form-control @error('headline') is-invalid @enderror">
-                                            @error('headline')
+                                            <label for="name" class="font-weight-bold">Nama</label>
+                                            <input type="text" name="name" id="name"
+                                                placeholder="Contoh: John Doe" value="{{ old('name', $user->name) }}"
+                                                class="form-control @error('name') is-invalid @enderror">
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="username" class="font-weight-bold">Username</label>
+                                            <input type="text" name="username" id="username"
+                                                placeholder="Contoh: johndoe" value="{{ old('username', $user->username) }}"
+                                                class="form-control @error('username') is-invalid @enderror">
+                                            @error('username')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -94,11 +81,33 @@
                                             @enderror
                                         </div>
 
+                                        <div class="form-group">
+                                            <label for="email" class="font-weight-bold">Email</label>
+                                            <input type="email" name="email" id="email"
+                                                placeholder="Contoh: 8rV4o@example.com"
+                                                value="{{ old('email', $user->email) }}"
+                                                class="form-control @error('location') is-invalid @enderror">
+                                            @error('email')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
                                     </div>
 
                                     <div class="col-lg-8 border-left-lg">
                                         <h4 class="font-weight-bold">Detail Profesional</h4>
                                         <p class="text-muted">Jelaskan keahlian dan pengalaman Anda.</p>
+
+                                        <div class="form-group">
+                                            <label for="headline" class="font-weight-bold">Headline</label>
+                                            <input type="text" name="headline" id="headline"
+                                                placeholder="Contoh: Web Developer & UI/UX Designer"
+                                                value="{{ old('headline', $user->headline) }}"
+                                                class="form-control @error('headline') is-invalid @enderror">
+                                            @error('headline')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
 
                                         <div class="form-group">
                                             <label for="bio" class="font-weight-bold">Bio Singkat</label>
@@ -110,26 +119,34 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="keahlian" class="font-weight-bold">Keahlian</label>
-                                            <input type="text" name="keahlian" id="keahlian"
-                                                placeholder="Contoh: PHP, Laravel, MySQL (pisahkan dengan koma)"
-                                                value="{{ old('keahlian', $user->keahlian) }}"
-                                                class="form-control @error('keahlian') is-invalid @enderror">
-                                            @error('keahlian')
+                                            <label for="company_name" class="font-weight-bold">Nama Perusahaan</label>
+                                            <input type="text" name="company_name" id="company_name"
+                                                placeholder="Contoh: PT. ABC"
+                                                value="{{ old('company_name', $user->company_name) }}"
+                                                class="form-control @error('company_name') is-invalid @enderror">
+                                            @error('company_name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
 
+                                        @php
+                                            $isFirstSubmission = !$user->cv_file_path || !$user->portfolio;
+                                        @endphp
+
                                         <div class="row">
                                             <div class="col-md-6 form-group">
-                                                <label for="cv" class="font-weight-bold">Upload CV (PDF)</label>
+                                                {{ $isFirstSubmission ? 'Upload CV (PDF)' : 'Ganti CV (Opsional)' }}
+                                                @if ($isFirstSubmission)
+                                                    <span class="text-danger">*</span>
+                                                @endif
                                                 <div class="custom-file">
-                                                    <input type="file" name="cv"
-                                                        class="custom-file-input @error('cv') is-invalid @enderror"
-                                                        id="cv" accept="application/pdf">
+                                                    <input type="file" name="cv_file_path"
+                                                        class="custom-file-input @error('cv_file_path') is-invalid @enderror"
+                                                        id="cv_file_path" accept="application/pdf"
+                                                        @if ($isFirstSubmission) required @endif>
                                                     <label class="custom-file-label" for="cv">Pilih file...</label>
                                                 </div>
-                                                @error('cv')
+                                                @error('cv_file_path')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                                 @if ($user->cv_file_path)
@@ -138,13 +155,20 @@
                                                             target="_blank">Lihat CV</a></small>
                                                 @endif
                                             </div>
+
+
                                             <div class="col-md-6 form-group">
-                                                <label for="portfolio" class="font-weight-bold">Upload Portofolio
-                                                    (PDF)</label>
+                                                <label for="portfolio" class="font-weight-bold">
+                                                    {{ $isFirstSubmission ? 'Upload Portofolio (PDF)' : 'Ganti Portofolio (Opsional)' }}
+                                                    @if ($isFirstSubmission)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
+                                                </label>
                                                 <div class="custom-file">
                                                     <input type="file" name="portfolio"
                                                         class="custom-file-input @error('portfolio') is-invalid @enderror"
-                                                        id="portfolio" accept="application/pdf">
+                                                        id="portfolio" accept="application/pdf"
+                                                        @if ($isFirstSubmission) required @endif>
                                                     <label class="custom-file-label" for="portfolio">Pilih file...</label>
                                                 </div>
                                                 @error('portfolio')
@@ -164,7 +188,8 @@
                                 <hr class="my-4">
 
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary btn-lg">
+                                    <a href="{{ route('freelancer.profil.show') }}" class="btn btn-secondary">Batal</a>
+                                    <button type="submit" class="btn btn-primary ml-2">
                                         Simpan Profil
                                     </button>
                                 </div>

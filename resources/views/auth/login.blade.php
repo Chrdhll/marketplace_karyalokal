@@ -104,8 +104,8 @@
                         <form class="row login_form" action="{{ route('login') }}" method="POST" id="contactFormLogin">
                             @csrf
                             <div class="col-md-12 form-group">
-                                <input type="email" class="form-control" name="email" placeholder="Email"
-                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'"
+                                <input type="text" class="form-control" name="login" placeholder="Email atau Username"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email atau Username'"
                                     value="{{ old('email') }}" required>
                                 {{-- Error spesifik untuk email tidak perlu lagi karena sudah ditangani di atas --}}
                             </div>

@@ -18,7 +18,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover">
-                                    <thead>
+                                    <thead class="text-center">
                                         <tr>
                                             <th scope="col">ID Pesanan</th>
                                             <th scope="col">Jasa yang Dipesan</th>
@@ -39,12 +39,12 @@
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('public.freelancer.show', $order->freelancer->id) }}">
+                                                    <a href="{{ route('public.freelancer.show', $order->freelancer->username) }}">
                                                         {{ $order->freelancer->name }}
                                                     </a>
                                                 </td>
                                                 <td>{{ $order->created_at->format('d M Y') }}</td>
-                                                <td>Rp {{ number_format($order->price, 0, ',', '.') }}</td>
+                                                <td>Rp {{ number_format($order->gig->price, 0, ',', '.') }}</td>
                                                 <td>
                                                     {{-- Memberi warna status agar mudah dikenali --}}
                                                     @if ($order->status == 'pending')
@@ -61,17 +61,30 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{-- Cek jika status 'completed' DAN belum pernah direview --}}
-                                                    @if ($order->status == 'completed' && !$order->review)
-                                                        <button type="button" class="btn btn-sm btn-primary"
-                                                            data-toggle="modal"
-                                                            data-target="#reviewModal-{{ $order->id }}">
-                                                            Beri Ulasan
-                                                        </button>
-                                                    @else
-                                                        <a href="#" class="btn btn-sm btn-outline-primary">Lihat
-                                                            Detail</a>
+                                                    <div class="d-flex">
+                                                    @if ($order->status == 'completed')
+                                                        {{-- Tombol Download akan selalu muncul jika file ada & pesanan selesai --}}
+                                                        @if ($order->delivered_file_path)
+                                                            <a href="{{ route('order.download', $order->id) }}"
+                                                                class="btn btn-sm btn-success mb-1 d-block">
+                                                                <i class="fa fa-download"></i> Download Hasil
+                                                            </a>
+                                                        @endif
+
+                                                        {{-- Tombol Ulasan hanya muncul jika pesanan selesai DAN belum ada review --}}
+                                                        @if (!$order->review)
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-primary d-block w-100"
+                                                                data-toggle="modal"
+                                                                data-target="#reviewModal-{{ $order->id }}">
+                                                                <i class="fa fa-star"></i> Beri Ulasan
+                                                            </button>
+                                                        @endif
                                                     @endif
+                                                    {{-- Untuk status lain (pending, in_progress, dll), tampilkan tombol Detail --}}
+                                                    <a href="{{ route('order.show', $order->id) }}"
+                                                        class="btn btn-sm btn-outline-primary ml-2">Lihat Detail</a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty

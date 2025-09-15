@@ -15,7 +15,9 @@ class Order extends Model
         'freelancer_id',
         'total_price',
         'status',
-        'midtrans_transaction_id'
+        'midtrans_transaction_id',
+        'delivered_file_path',
+        'delivery_notes',
     ];
 
     public function gig()
@@ -36,5 +38,11 @@ class Order extends Model
     public function review()
     {
         return $this->hasOne(Review::class);
+    }
+
+    // Satu pesanan bisa punya banyak pesan
+    public function messages()
+    {
+        return $this->hasMany(OrderMessage::class);
     }
 }
