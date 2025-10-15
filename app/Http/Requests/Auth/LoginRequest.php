@@ -37,18 +37,29 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
-        $this->ensureIsNotRateLimited();
+         $this->ensureIsNotRateLimited();
 
-        $user = User::where('email', $this->input('login'))
-            ->orWhere('username', $this->input('login'))
-            ->first();
+         // Cari user berdasarkan email atau username, TERMASUK yang sudah di-soft-delete
+    $user = User::withTrashed()->where('email', $this->input('login'))
+                ->orWhere('username', $this->input('login'))
+                ->first();
 
-        if (! $user || ! Auth::guard('web')->attempt(['email' => $user->email, 'password' => $this->input('password')], $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-            throw ValidationException::withMessages(['login' => trans('auth.failed')]);
-        }
+    // Jika user ditemukan tapi statusnya terhapus
+    if ($user && $user->trashed()) {
+        // Redirect ke halaman reaktivasi
+        // Kita lempar exception khusus yang akan ditangkap oleh Laravel
+        throw ValidationException::withMessages([
+            'login' => 'akun_dinonaktifkan',
+        ])->redirectTo(route('reactivate.notice') . '?email=' . $user->email);
+    }
 
-        RateLimiter::clear($this->throttleKey());
+    // Jika user aktif tapi password salah
+    if (! $user || ! Auth::guard('web')->attempt(['email' => $user->email, 'password' => $this->input('password')], $this->boolean('remember'))) {
+        RateLimiter::hit($this->throttleKey());
+        throw ValidationException::withMessages(['login' => trans('auth.failed')]);
+    }
+
+    RateLimiter::clear($this->throttleKey());
     }
 
 

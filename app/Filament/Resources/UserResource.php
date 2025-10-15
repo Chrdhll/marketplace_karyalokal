@@ -25,6 +25,9 @@ use Illuminate\Support\HtmlString;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
 
 class UserResource extends Resource
 {
@@ -32,114 +35,91 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationLabel = 'Moderasi Freelancer';
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where(function ($query) {
             $query->where('role', 'freelancer')
-                ->orWhereNotNull('profile_status');
+                ->orWhereHas('freelancerProfile');
         });
     }
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('profile_status', 'pending')
-            ->count();
+        return static::getModel()::whereHas('freelancerProfile', function ($query) {
+            $query->where('profile_status', 'pending');
+        })->count();
     }
 
-    public static function form(Form $form): Form
+     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Grid::make(3)->schema([
-                    // KOLOM KIRI (2/3 LEBAR): INFORMASI FREELANCER (READ-ONLY)
+                    // KOLOM KIRI: INFORMASI FREELANCER (READ-ONLY)
                     Section::make('Informasi Freelancer')
                         ->columnSpan(2)
                         ->schema([
                             TextInput::make('name')->disabled(),
                             TextInput::make('email')->disabled(),
-                            Textarea::make('bio')->disabled()->columnSpanFull(),
-                            Placeholder::make('cv')
+                            Textarea::make('freelancerProfile.bio') // <-- Gunakan notasi titik
+                            ->label('Bio')
+                            ->disabled()
+                            ->columnSpanFull(),
+
+                            Placeholder::make('dokumen_link')
                                 ->label('CV & Portofolio')
                                 ->content(function (?User $record): HtmlString {
-                                    if ($record) {
-                                        $cvLink = $record->cv_file_path ? '<a href="' . Storage::url($record->cv_file_path) . '" target="_blank" class="text-primary-600 hover:underline">Lihat CV</a>' : 'Tidak ada CV';
-                                        $portfolioLink = $record->portfolio ? '<a href="' . Storage::url($record->portfolio) . '" target="_blank" class="text-primary-600 hover:underline">Lihat Portofolio</a>' : 'Tidak ada Portofolio';
-                                        return new HtmlString($cvLink . ' | ' . $portfolioLink);
-                                    }
-                                    return new HtmlString('');
+                                    if (!$record || !$record->freelancerProfile) return new HtmlString('');
+                                    
+                                    $cvLink = $record->freelancerProfile->cv_file_path 
+                                        ? '<a href="' . Storage::url($record->freelancerProfile->cv_file_path) . '" target="_blank" class="text-primary-600 hover:underline">Lihat CV</a>' 
+                                        : 'Tidak ada CV';
+                                    
+                                    $portfolioLink = $record->freelancerProfile->portfolio 
+                                        ? '<a href="' . Storage::url($record->freelancerProfile->portfolio) . '" target="_blank" class="text-primary-600 hover:underline">Lihat Portofolio</a>' 
+                                        : 'Tidak ada Portofolio';
+
+                                    return new HtmlString($cvLink . ' | ' . $portfolioLink);
                                 }),
                         ]),
 
-                    // KOLOM KANAN (1/3 LEBAR): AKSI ADMIN
+                    // KOLOM KANAN: AKSI ADMIN
                     Section::make('Aksi Admin')
                         ->columnSpan(1)
                         ->schema([
-                            Select::make('profile_status')
+                            Select::make('freelancerProfile.profile_status')
                                 ->label('Status Profil')
                                 ->options([
                                     'pending' => 'Pending',
                                     'approved' => 'Approved',
                                     'rejected' => 'Rejected',
                                 ])
-                                ->required()
-                                ->live() // <-- Tambahkan ini
-                                ->afterStateUpdated(function ($state, Set $set) {
-                                    // Jika status diubah menjadi 'approved', otomatis ubah role jadi 'freelancer'
-                                    if ($state === 'approved') {
-                                        $set('role', 'freelancer');
-                                    }
-                                }),
+                                ->required(),
 
                             Select::make('role')
-                                ->options([
-                                    'client' => 'Client',
-                                    'freelancer' => 'Freelancer',
-                                ])
+                                ->options(['client' => 'Client', 'freelancer' => 'Freelancer'])
                                 ->required()
-                                ->disabled(fn(?User $record): bool => $record && $record->id === Auth::id()),
-
-                            // Opsional: Tambahkan field untuk catatan admin
-                            Textarea::make('admin_notes')
-                                ->label('Catatan Admin (Internal)')
-                                ->helperText('Catatan ini hanya bisa dilihat oleh admin lain.')
+                                 ->disabled(),
                         ]),
                 ]),
             ]);
     }
 
-    public static function table(Table $table): Table
+     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Freelancer')
-                    ->sortable()
-                    ->description(fn($record) => $record->headline)
+                ImageColumn::make('profile_picture_path')->label('Foto')->circular(),
+                TextColumn::make('name')
+                    ->label('Nama')
+                    ->description(fn(User $record): string => $record->freelancerProfile?->headline ?? '')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('role'),
-                Tables\Columns\ImageColumn::make('profile_picture_path')
-                    ->label('Foto')
-                    ->disk('public')
-                    ->visibility('public')
-                    ->circular(),
-                Tables\Columns\TextColumn::make('headline')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('location')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('company_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('d M Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime('d M Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\BadgeColumn::make('profile_status')
-                    ->label('Status')
+                TextColumn::make('email')->searchable(),
+                TextColumn::make('role')->sortable(),
+                BadgeColumn::make('freelancerProfile.profile_status')
+                    ->label('Status Profil')
                     ->colors([
                         'warning' => 'pending',
                         'success' => 'approved',
@@ -148,37 +128,18 @@ class UserResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('profile_status')
+                // Filter berdasarkan status profil di relasi
+                SelectFilter::make('freelancerProfile')
+                    ->relationship('freelancerProfile', 'profile_status')
                     ->options([
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ])
-
+                    ->label('Status Profil'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-
-                Action::make('Lihat Cv')
-                    ->url(fn($record) => Storage::url($record->cv_file_path))
-                    ->openUrlInNewTab()
-                    ->icon('heroicon-o-document-text')
-                    ->color('gray')
-                    // Tombol hanya muncul jika user sudah upload CV
-                    ->visible(fn($record) => $record->cv_file_path),
-
-                Action::make('Lihat Portofolio')
-                    ->url(fn($record) => Storage::url($record->portfolio))
-                    ->openUrlInNewTab()
-                    ->icon('heroicon-o-presentation-chart-line')
-                    ->color('gray')
-                    // Tombol hanya muncul jika user sudah upload portofolio
-                    ->visible(fn($record) => $record->portfolio),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

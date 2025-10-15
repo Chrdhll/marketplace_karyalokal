@@ -6,54 +6,30 @@
         <div class="container">
             <div class="row fullscreen align-items-center justify-content-start">
                 <div class="col-lg-12">
-                    <div class="active-banner-slider owl-carousel">
-                        <!-- single-slide -->
-                        <div class="row single-slide align-items-center d-flex">
-                            <div class="col-lg-5 col-md-6 mt-5">
-                                <div class="banner-content mt-5" style="color: white;">
-                                    <h1 class="mt-4" style="color: white;">Welcome To<br>KaryaLokal</h1>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                        incididunt ut labore et
-                                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                                    <form action="{{ route('search') }}" method="GET" class="mt-4">
-                                        <div class="input-group" style="width: 100%;">
-                                            <input type="text" name="q" class="form-control"
-                                                placeholder="Cari produk atau jasa..."
-                                                style="border-radius: 0; min-height: 50px; font-size: 16px;">
-                                            <div class="input-group-append">
-                                                <button class="btn" type="submit"
-                                                    style="background-color: #ffba00; color: white; border-radius: 0; min-height: 50px; padding: 0 30px; font-size: 16px;">
-                                                    Cari
-                                                </button>
-                                            </div>
+                    <div class="row single-slide align-items-center d-flex">
+                        <div class="col-lg-5 col-md-6 mt-5">
+                            <div class="banner-content mt-5" style="color: white;">
+                                <h1 class="mt-4" style="color: white;">Welcome To<br>KaryaLokal</h1>
+                                <p>Butuh logo baru, website profesional, atau konten berkualitas? Jelajahi ribuan jasa dari
+                                    freelancer berbakat di seluruh Indonesia. Temukan partner yang tepat dan mulai proyek
+                                    Anda hari ini.</p>
+                                <form action="{{ route('public.gigs.index') }}" method="GET" class="mt-4">
+                                    <div class="input-group" style="width: 100%;">
+                                        <input type="text" name="q" class="form-control"
+                                            placeholder="Cari jasa..."
+                                            style="border-radius: 0; min-height: 50px; font-size: 16px;">
+                                        <div class="input-group-append">
+                                            <button class="btn" type="submit"
+                                                style="background-color: #ffba00; color: white; border-radius: 0; min-height: 50px; padding: 0 30px; font-size: 16px;">
+                                                Cari
+                                            </button>
                                         </div>
-                                    </form>
-
-                                </div>
-                            </div>
-                            <div class="col-lg-7">
-                                <div class="banner-img">
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <!-- single-slide -->
-                        <div class="row single-slide">
-                            <div class="col-lg-5">
-                                <div class="banner-content">
-                                    <h1>Nike New <br>Collection!</h1>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                        incididunt ut labore et
-                                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                                    <div class="add-bag d-flex align-items-center">
-                                        <a class="add-btn" href=""><span class="lnr lnr-cross"></span></a>
-                                        <span class="add-text text-uppercase">Add to Bag</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-7">
-                                <div class="banner-img">
-                                    <img class="img-fluid" src="/assets/img/banner/banner-img.png" alt="">
-                                </div>
+                        <div class="col-lg-7">
+                            <div class="banner-img">
                             </div>
                         </div>
                     </div>
@@ -63,25 +39,8 @@
     </section>
     <!-- header section -->
 
-    <!-- Start Serevices -->
-    <section class="brand-area section_gap">
-        <div class="container">
-            <div class="row">
-                {{-- Kita batasi hanya 5 kategori pertama yang tampil --}}
-                @foreach ($sharedCategories->take(5) as $category)
-                    <a class="col single-img" href="{{ route('public.gigs.index', ['category' => $category->slug]) }}">
-                        {{-- Nama gambar dibuat dinamis: services-1.png, services-2.png, dst. --}}
-                        <img class="img-fluid d-block mx-auto" src="/assets/img/brand/services-{{ $loop->iteration }}.png"
-                            alt="{{ $category->name }}">
-                    </a>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    <!-- End Serevices -->
-
     <!-- Start Made On -->
-    <section class="category-area">
+    <section class="category-area mt-5">
         <div class="container">
             <h2 class="mb-4">Made On KaryaLokal</h2>
             <div class="row justify-content-center">
@@ -93,7 +52,7 @@
                                 <img class="img-fluid w-100" src="/assets/img/category/c1.jpg" alt="">
                                 <a href="/assets/img/category/c1.jpg" class="img-pop-up" target="_blank">
                                     <div class="deal-details">
-                                        <h6 class="deal-title">Sneaker for Sports</h6>
+                                        <h6 class="deal-title">Programing</h6>
                                     </div>
                                 </a>
                             </div>
@@ -104,7 +63,7 @@
                                 <img class="img-fluid w-100" src="/assets/img/category/c2.jpg" alt="">
                                 <a href="/assets/img/category/c2.jpg" class="img-pop-up" target="_blank">
                                     <div class="deal-details">
-                                        <h6 class="deal-title">Sneaker for Sports</h6>
+                                        <h6 class="deal-title">CopyWriting</h6>
                                     </div>
                                 </a>
                             </div>
@@ -115,7 +74,7 @@
                                 <img class="img-fluid w-100" src="/assets/img/category/c3.jpg" alt="">
                                 <a href="/assets/img/category/c3.jpg" class="img-pop-up" target="_blank">
                                     <div class="deal-details">
-                                        <h6 class="deal-title">Product for Couple</h6>
+                                        <h6 class="deal-title">Video Editing</h6>
                                     </div>
                                 </a>
                             </div>
@@ -126,7 +85,7 @@
                                 <img class="img-fluid w-100" src="/assets/img/category/c4.jpg" alt="">
                                 <a href="/assets/img/category/c4.jpg" class="img-pop-up" target="_blank">
                                     <div class="deal-details">
-                                        <h6 class="deal-title">Sneaker for Sports</h6>
+                                        <h6 class="deal-title">Grapich Design</h6>
                                     </div>
                                 </a>
                             </div>
@@ -139,7 +98,7 @@
                         <img class="img-fluid w-100" src="/assets/img/category/c5.jpg" alt="">
                         <a href="/assets/img/category/c5.jpg" class="img-pop-up" target="_blank">
                             <div class="deal-details">
-                                <h6 class="deal-title">Sneaker for Sports</h6>
+                                <h6 class="deal-title">UI/UX Design</h6>
                             </div>
                         </a>
                     </div>
@@ -149,482 +108,88 @@
     </section>
     <!-- End Made On -->
 
-    <!-- start My Freelance -->
-    {{-- <section class="owl-carousel active-product-area section_gap">
-        <!-- single product slide -->
-        <div class="single-product-slider">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6 text-center">
-                        <div class="section-title">
-                            <h1>Temukan Freelancer</h1>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                incididunt ut labore et
-                                dolore
-                                magna aliqua.</p>
-                        </div>
+    <section class="lattest-product-area pb-40 category-list">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mt-5 mb-0">
+                    <div class="section-title">
+                        <h1>Produk Unggulan</h1>
+                        <p>Temukan produk dan jasa terbaik di KaryaLokal.</p>
                     </div>
                 </div>
-                <div class="row">
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
+                @forelse ($gigs as $gig)
+                    <div class="col-lg-4 col-md-6">
                         <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
+                            <a href="{{ route('public.gigs.show', $gig->slug) }}">
+                                <img class="img-fluid"
+                                    src="{{ $gig->cover_image_path ? Storage::url($gig->cover_image_path) : 'https://via.placeholder.com/300x200' }}"
+                                    alt="{{ $gig->title }}" style="height: 180px; object-fit: cover;">
+                            </a>
                             <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
+                                <h6>{{ $gig->title }}</h6>
                                 <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
+                                    <h6 class="l-through mb-0 text-primary font-weight-bold">Rp
+                                        {{ number_format($gig->price, 0, ',', '.') }}</h6>
                                     <div class="d-flex align-items-center">
                                         <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
+                                        <span
+                                            style="font-size: 14px; color: #555; margin-left: 4px;">{{ $gig->rating_average ? number_format($gig->rating_average, 1) : 'Baru' }}</span>
                                     </div>
                                 </div>
                                 <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
+
+                                    {{-- IKON 1: LINK BIASA --}}
+                                    <a href="{{ route('public.freelancer.show', $gig->user->username) }}"
+                                        class="social-info">
+                                        <span class="ti-user"></span>
+                                        <p class="hover-text">
+                                            {{ \Illuminate\Support\Str::limit($gig->user->name, 10) }}</p>
                                     </a>
-                                    <a href="{{ route('blog') }}" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
+
+                                    {{-- ============================================= --}}
+                                    {{--         IKON 2: WISHLIST (TEKNIK BARU)          --}}
+                                    {{-- ============================================= --}}
+
+                                    <form id="wishlist-form-{{ $gig->slug }}"
+                                        action="{{ route('wishlist.toggle', $gig->slug) }}" method="POST"
+                                        style="display: none;">
+                                        @csrf
+                                    </form>
+
+                                    <a href="#" class="social-info"
+                                        onclick="event.preventDefault(); document.getElementById('wishlist-form-{{ $gig->slug }}').submit();">
+                                        @if (auth()->check() && auth()->user()->wishlistedGigs->contains($gig))
+                                            {{-- Tampilan jika sudah di-wishlist --}}
+                                            <span class="fa fa-heart" style="color: red;"></span>
+                                            <p class="hover-text">Hapus</p>
+                                        @else
+                                            {{-- Tampilan jika belum di-wishlist --}}
+                                            <span class="lnr lnr-heart"></span>
+                                            <p class="hover-text">Wishlist</p>
+                                        @endif
                                     </a>
+
+                                    {{-- ============================================= --}}
+
+                                    {{-- IKON 3: LINK BIASA --}}
+                                    <a href="{{ route('public.gigs.show', $gig->slug) }}" class="social-info">
+                                        <span class="lnr lnr-move"></span>
+                                        <p class="hover-text">Lihat Jasa</p>
+                                    </a>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                @empty
+                    <div class="col-12">
+                        <div class="alert alert-warning">Tidak ada jasa yang ditemukan.</div>
                     </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
+                @endforelse
             </div>
         </div>
 
-        <!-- single product slide -->
-        <div class="single-product-slider">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6 text-center">
-                        <div class="section-title">
-                            <h1>Temukan Freelancer</h1>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                incididunt ut labore et
-                                dolore
-                                magna aliqua.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="/assets/img/user1.jpg" alt="">
-                            <div class="product-details">
-                                <h6>Muhammad Nawaf Akbar</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0">Web Developer</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span style="font-size: 14px; color: #555; margin-left: 4px;">4.8</span>
-                                    </div>
-                                </div>
-                                <div class="prd-bottom">
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="blog.html" class="social-info">
-                                        <span class="ti-plus"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-
-    </section> --}}
-    <!-- end My Freelance -->
+    </section>
 
     {{-- Cek dulu apakah ada data freelancer --}}
     @if (isset($freelancers) && count($freelancers) > 0)
@@ -661,7 +226,8 @@
                                     <div class="product-details">
                                         <h6>{{ $freelancer->name }}</h6>
                                         <div class="price d-flex justify-content-between align-items-center">
-                                            <h6 class="l-through mb-0">{{ $freelancer->headline ?? 'Freelancer' }}</h6>
+                                            <h6 class="l-through mb-0">
+                                                {{ $freelancer->freelancerProfile?->headline ?? 'Freelancer' }}</h6>
                                             <div class="d-flex align-items-center">
                                                 <span style="color: #fbc02d; font-size: 16px;">★</span>
                                                 <span style="font-size: 14px; color: #555; margin-left: 4px;">
@@ -697,14 +263,15 @@
                             <div style="text-align: left;">
                                 <h1 class="mb-3" style="text-align: left;">KaryaLokal</h1>
                                 <p style="text-align: justify;">
-                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-                                    Ipsum
-                                    has been the industry's standard dummy text ever since the 1500s, when an unknown
-                                    printer took a galley of type and scrambled it to make a type specimen book. It has
-                                    survived not only five centuries, but also the leap into electronic typesetting,
-                                    remaining essentially unchanged. It was popularised in the 1960s with the release of
-                                    Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-                                    publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                    KaryaLokal adalah platform freelance yang menghubungkan para pekerja lepas berbakat di
+                                    seluruh Indonesia dengan individu maupun bisnis yang membutuhkan jasa mereka. Dengan
+                                    misi mendukung potensi dan kreativitas anak bangsa, KaryaLokal menjadi tempat bagi
+                                    freelancer lokal untuk memamerkan karya, mendapatkan proyek, dan berkembang bersama
+                                    klien dalam negeri.
+                                    Kami hadir untuk mempermudah proses pencarian dan penawaran jasa secara aman,
+                                    transparan, dan efisien. Baik Anda seorang freelancer yang ingin memperluas peluang
+                                    kerja, atau klien yang mencari talenta lokal berkualitas, KaryaLokal adalah jembatan
+                                    untuk mewujudkan kerja sama yang saling menguntungkan.
                                 </p>
                                 <a href="" class="primary-btn">Shop Now</a>
                             </div>
@@ -712,40 +279,56 @@
                     </div>
                 </div>
                 <div class="col-lg-6 no-padding exclusive-right">
-                    <div class="active-exclusive-product-slider">
-                        <!-- single review carousel -->
-                        <div class="single-exclusive-slider d-flex flex-column align-items-center text-center">
-                            <img src="/assets/img/user1.jpg" alt="Foto User"
-                                style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
-                            <div class="product-details">
-                                <div class="price">
-                                    <h6><i class="fa fa-star text-warning"></i> 4.8 / 5.0</h6>
-                                    <h6 class="text-muted">Kategori: Jasa Desain</h6>
+                    <div id="reviewCarousel" class="carousel slide" data-ride="carousel"> {{-- Bootstrap 4 pakai data-ride --}}
+                        <div class="carousel-inner">
+
+                            {{-- MULAI PERULANGAN DI SINI --}}
+                            @forelse ($reviews as $review)
+                                {{-- Tambahkan class 'active' hanya untuk item pertama --}}
+                                <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                    <div class="d-flex flex-column align-items-center text-center p-4">
+                                        {{-- Foto Profil Klien --}}
+                                        <img src="{{ $review->client->profile_picture_path ? Storage::url($review->client->profile_picture_path) : 'https://ui-avatars.com/api/?name=' . urlencode($review->client->name) }}"
+                                            alt="Foto User"
+                                            style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:15px;">
+
+                                        <div class="product-details px-md-5">
+                                            <div class="price">
+                                                {{-- Rating yang diberikan --}}
+                                                <h6><i class="fa fa-star text-warning"></i>
+                                                    {{ number_format($review->rating, 1) }} / 5.0</h6>
+                                                {{-- Kategori dari Gig yang diulas --}}
+                                                <h6 class="text-muted">Kategori:
+                                                    {{ $review->gig->category->name ?? 'N/A' }}</h6>
+                                            </div>
+                                            {{-- Komentar ulasan --}}
+                                            <h4>“{{ \Illuminate\Support\Str::limit($review->comment, 100) }}”</h4>
+                                        </div>
+                                    </div>
                                 </div>
-                                <h4>“Pelayanan cepat dan hasil desain sangat memuaskan!”</h4>
-                                <div class="add-bag d-flex align-items-center justify-content-center mt-3">
-                                    <a class="add-btn" href="#"><span class="lnr lnr-eye"></span></a>
-                                    <span class="add-text text-uppercase">Lihat Ulasan</span>
+                            @empty
+                                {{-- Tampilan jika tidak ada ulasan sama sekali --}}
+                                <div class="carousel-item active">
+                                    <div class="d-flex flex-column align-items-center text-center p-4">
+                                        <h4 class="text-white">Belum Ada Ulasan</h4>
+                                        <p class="text-white">Jadilah yang pertama memberikan ulasan di KaryaLokal!</p>
+                                    </div>
                                 </div>
-                            </div>
+                            @endforelse
+                            {{-- AKHIR PERULANGAN --}}
+
                         </div>
 
-                        <!-- single review carousel -->
-                        <div class="single-exclusive-slider d-flex flex-column align-items-center text-center">
-                            <img src="/assets/img/user1.jpg" alt="Foto User"
-                                style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
-                            <div class="product-details">
-                                <div class="price">
-                                    <h6><i class="fa fa-star text-warning"></i> 4.5 / 5.0</h6>
-                                    <h6 class="text-muted">Kategori: Produk Handmade</h6>
-                                </div>
-                                <h4>“Produk berkualitas, dikemas rapi, dan pengiriman cepat.”</h4>
-                                <div class="add-bag d-flex align-items-center justify-content-center mt-3">
-                                    <a class="add-btn" href="#"><span class="lnr lnr-eye"></span></a>
-                                    <span class="add-text text-uppercase">Lihat Ulasan</span>
-                                </div>
-                            </div>
-                        </div>
+                        <button class="carousel-control-prev" type="button" data-target="#reviewCarousel"
+                            data-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-target="#reviewCarousel"
+                            data-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </button>
                     </div>
                 </div>
 
@@ -755,141 +338,5 @@
     </section>
     <!-- End ulasan -->
 
-    <!-- Start related-product Area -->
-    <!-- <section class="related-product-area section_gap_bottom">
-                        <div class="container">
-                        <div class="row justify-content-center">
-                        <div class="col-lg-6 text-center">
-                        <div class="section-title">
-                        <h1>Deals of the Week</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore
-                        magna aliqua.</p>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="row">
-                        <div class="col-lg-9">
-                        <div class="row">
-                        <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r1.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r2.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r3.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r5.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r6.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r7.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r9.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r10.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                        <div class="single-related-product d-flex">
-                        <a href="#"><img src="/assets/img/r11.jpg" alt=""></a>
-                        <div class="desc">
-                         <a href="#" class="title">Black lace Heels</a>
-                         <div class="price">
-                          <h6>$189.00</h6>
-                          <h6 class="l-through">$210.00</h6>
-                         </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-lg-3">
-                        <div class="ctg-right">
-                        <a href="#" target="_blank">
-                        <img class="img-fluid d-block mx-auto" src="/assets/img/category/c5.jpg" alt="">
-                        </a>
-                        </div>
-                        </div>
-                        </div>
-                        </div>
-                        </section> -->
-    <!-- End related-product Area -->
+
 @endsection

@@ -19,6 +19,7 @@ class CheckAdminRole
         if (Auth::check() && Auth::user()->role === 'admin') {
             return $next($request);
         }
-        return redirect('');
+
+        return redirect()->route('index')->with('error', 'Anda tidak memiliki izin untuk mengakses halaman ini.');
     }
 }

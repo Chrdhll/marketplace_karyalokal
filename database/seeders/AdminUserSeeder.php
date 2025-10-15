@@ -21,7 +21,6 @@ class AdminUserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('12345'), // <-- Ganti dengan password yang aman
             'role' => 'admin',
-            'profile_status' => 'approved', // Admin otomatis approved
         ]);
     }
 }

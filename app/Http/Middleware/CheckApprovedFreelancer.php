@@ -19,7 +19,7 @@ class CheckApprovedFreelancer
     }
 
         // Jika tidak, tendang kembali ke halaman profil dengan pesan error
-        return redirect()->route('freelancer.profil.edit')
+        return redirect()->route('freelancer.profil.show')
                          ->with('error', 'Profil Anda harus disetujui oleh admin sebelum dapat mengelola jasa.');
     }
 }

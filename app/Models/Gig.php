@@ -18,8 +18,15 @@ class Gig extends Model
         'cover_image_path',
         'estimated_time',
         'rating_average',
-        'review_count'
+        'review_count',
+        'slug',
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 
     public function user()
     {

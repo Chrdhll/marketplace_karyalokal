@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage; // <-- Import Storage
+use Illuminate\Validation\Rule; //
 
 class ProfileController extends Controller
 {
@@ -26,17 +28,40 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Ambil data yang sudah divalidasi dari ProfileUpdateRequest
+        $validatedData = $request->validated();
+
+        // Validasi tambahan untuk username & profile_picture di sini
+        $request->validate([
+            'username' => ['required', 'string', 'max:50', 'alpha_dash', Rule::unique('users')->ignore($user->id)],
+            'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+        ]);
+
+        // Isi data user dengan data yang sudah divalidasi
+        $user->fill($validatedData);
+        $user->username = $request->input('username'); // Isi username
+
+        // Jika user ganti email, reset verifikasinya
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        // Handle upload foto profil
+        if ($request->hasFile('profile_picture')) {
+            // Hapus foto lama jika ada
+            if ($user->profile_picture_path) {
+                Storage::disk('public')->delete($user->profile_picture_path);
+            }
+            // Simpan foto baru
+            $user->profile_picture_path = $request->file('profile_picture')->store('profile-pictures', 'public');
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
-
     /**
      * Delete the user's account.
      */

@@ -14,16 +14,36 @@ class WishlistController extends Controller
 
         return view('wishlist.index', compact('wishlistedGigs'));
     }
-    public function toggle(Gig $gig)
+   public function toggle(Request $request, Gig $gig)
     {
-        // Hanya klien yang bisa punya wishlist
-        if (Auth::user()->role !== 'client') {
-            return back()->with('error', 'Hanya klien yang bisa menambahkan ke wishlist.');
+        $user = Auth::user();
+
+        // 1. Keamanan: Pengguna tidak bisa wishlist Gigs miliknya sendiri.
+        if ($gig->user_id === $user->id) {
+            $errorMessage = 'Anda tidak bisa menambahkan jasa Anda sendiri ke wishlist.';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $errorMessage], 403);
+            }
+            return back()->with('error', $errorMessage);
         }
 
-        // Perintah ajaib 'toggle' dari Laravel untuk relasi many-to-many
-        Auth::user()->wishlistedGigs()->toggle($gig->id);
+        // 2. Lakukan aksi toggle (tambah/hapus)
+        $result = $user->wishlistedGigs()->toggle($gig->id);
 
-        return back();
+        // 3. Siapkan pesan balasan yang dinamis
+        $attached = count($result['attached']) > 0;
+        $message = $attached ? 'Berhasil ditambahkan ke wishlist!' : 'Berhasil dihapus dari wishlist.';
+
+        // 4. Kirim balasan yang sesuai
+        if ($request->expectsJson()) {
+            // Jika request datang dari script AJAX kita, kirim balasan JSON
+            return response()->json([
+                'attached' => $attached,
+                'message' => $message,
+            ]);
+        }
+
+        // Fallback jika JavaScript gagal, redirect dengan pesan
+        return back()->with('success', $message);
     }
 }

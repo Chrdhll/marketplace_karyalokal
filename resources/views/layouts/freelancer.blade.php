@@ -19,25 +19,204 @@
     <!--
   CSS
   ============================================= -->
-    <link rel="stylesheet" href="/assets/css/linearicons.css">
-    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/assets/css/themify-icons.css">
-    <link rel="stylesheet" href="/assets/css/bootstrap.css">
-    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
-    <link rel="stylesheet" href="/assets/css/nice-select.css">
-    <link rel="stylesheet" href="/assets/css/nouislider.min.css">
-    <link rel="stylesheet" href="/assets/css/ion.rangeSlider.css">
-    <link rel="stylesheet" href="/assets/css/ion.rangeSlider.skinFlat.css">
-    <link rel="stylesheet" href="/assets/css/magnific-popup.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/linearicons.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/themify-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/nice-select.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/nouislider.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/ion.rangeSlider.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/ion.rangeSlider.skinFlat.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/magnific-popup.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap4.css" rel="stylesheet">
     <!-- Font Awesome CDN (versi 6) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
 
     @stack('scripts')
+
+    <style>
+        @media (max-width: 991.98px) {
+            /* Target yang SANGAT SPESIFIK untuk logo dan tombol */
+            @media (max-width: 991.98px) {
+
+                /* Perintah untuk container agar menjadi flexbox */
+                .header_area .main_menu .navbar .container {
+                    display: flex !important;
+                    justify-content: space-between !important;
+                    align-items: center !important;
+                    width: 100% !important;
+                    padding: 15px 15px !important;
+                    /* Reset padding aneh */
+                }
+
+                /* Perintah untuk logo DAN tombol hamburger agar tidak rakus tempat */
+                .header_area .navbar-brand,
+                .header_area .navbar-toggler {
+                    width: auto !important;
+                    /* Jangan ambil lebar penuh */
+                    flex: none !important;
+                    /* Hentikan sifat 'flex-grow' */
+                    margin: 0 !important;
+                    /* Hapus semua margin yang aneh */
+                    padding: 0 !important;
+                    /* Hapus padding yang aneh */
+                }
+            }
+
+            .sidebar-wrapper {
+                position: fixed;
+                top: 0;
+                right: -280px;
+                /* Sembunyi di kiri */
+                width: 280px;
+                height: 100%;
+                background: #fff;
+                z-index: 1050;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar-wrapper.active {
+                right: 0;
+                /* Munculkan */
+            }
+
+            .sidebar-header {
+                padding: 15px 20px;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .close-sidebar-btn {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+            }
+
+            .sidebar-nav {
+                list-style: none;
+                padding: 15px 0;
+                margin: 0;
+            }
+
+            .sidebar-nav li a {
+                display: block;
+                padding: 10px 20px;
+                color: #333;
+                text-decoration: none;
+                transition: background 0.2s ease;
+            }
+
+            .sidebar-nav .button-login li a {
+                background-color: #ffba00;
+                color: white;
+                padding: 6px 20px;
+                max-width: 80px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                /* text-decoration: none; transition: background 0.2s ease; */
+            }
+
+            .sidebar-nav li a:hover {
+                background: #f8f9fa;
+            }
+
+            .sidebar-nav .sidebar-heading {
+                padding: 10px 20px;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                color: #999;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1040;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .li-login {
+                padding: 10px 20px;
+            }
+        }
+
+        @media (min-width: 992px) {
+
+            /* Sembunyikan semua elemen sidebar */
+            .sidebar-wrapper,
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .primary-btn {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
+                margin-top: 15px;
+                /* Beri jarak atas agar tidak nempel */
+                margin-bottom: 10px;
+                /* Beri jarak bawah */
+            }
+
+            /* Pengecualian: jangan terapkan margin jika tombol ada di navbar atau header */
+            .header_area .primary-btn,
+            .d-flex .primary-btn {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div class="sidebar-wrapper" id="sidebar-wrapper">
+        <div class="sidebar-header">
+            <h5>Menu Utama</h5>
+            <button type="button" class="close-sidebar-btn" id="close-sidebar">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-heading">
+                Freelancer</li>
+            <li><a href="{{ route('freelancer.dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ route('freelancer.orders.index') }}">Pesanan Masuk</a></li>
+            <li><a href="{{ route('freelancer.gigs.index') }}">Kelola Jasa</a></li>
+            <li><a href="{{ route('freelancer.finance.index') }}">Keuangan</a></li>
+            <hr>
+            <li class="sidebar-heading">
+                Akun Saya</li>
+            <li><a href="{{ route('freelancer.profil.show') }}">Profil Saya</a></li>
+            <hr>
+            <div class="button-login">
+                <li class="li-login {{ request()->routeIs('freelancer.finance.*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('index') }}">
+                        Kembali
+                    </a>
+                </li>
+            </div>
+        </ul>
+    </div>
+    {{-- Overlay untuk background gelap --}}
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <!-- Start Header Area -->
     <header class="header_area sticky-header">
@@ -47,16 +226,16 @@
                     <!-- Brand and toggle get grouped for better mobile display -->
                     <a class="navbar-brand logo_h" href="{{ route('index') }}"><img src="/assets/img/logobaru.png"
                             alt="" style="width: 50%;"></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+                    <button class="navbar-toggler" type="button" id="sidebar-toggler"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-                        <ul class="nav navbar-nav menu_nav ml-auto">
+                        <ul class="nav navbar-nav menu_nav ml-auto py-3">
                             <li class="nav-item {{ request()->routeIs('freelancer.dashboard') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('freelancer.dashboard') }}">Dashboard</a>
                             </li>
@@ -69,13 +248,17 @@
                             <li class="nav-item {{ request()->routeIs('freelancer.profil.*') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('freelancer.profil.show') }}">Profil Saya</a>
                             </li>
+                            <li class="nav-item {{ request()->routeIs('freelancer.finance.*') ? 'active' : '' }}"><a
+                                    class="nav-link" href="{{ route('freelancer.finance.index') }}">Keuangan</a></li>
+                            <li class="nav-item {{ request()->routeIs('freelancer.finance.*') ? 'active' : '' }}">
+                                <a class="primary-btn" href="{{ route('index') }}"
+                                    style="border-radius: 0; padding: 10px 20px; line-height: normal; display: inline-block; margin-left: 10px; color: #fff;">
+                                    Kembali
+                                </a>
+                            </li>
+
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            {{-- TOMBOL KEMBALI KE MARKETPLACE (MODE KLIEN) --}}
-                            <li class="nav-item">
-                                <a href="{{ route('index') }}" class="primary-btn"
-                                    style="border-radius: 5px; line-height: 38px;">Kembali ke Marketplace</a>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -93,17 +276,16 @@
                 <div class="col-lg-4  col-md-6 col-sm-6">
                     <div class="single-footer-widget">
                         <h6>About Us</h6>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
-                            ut labore dolore
-                            magna aliqua.
+                        <p class="text-white">
+                            KaryaLokal adalah jembatan bagi talenta lokal dan klien untuk bertemu, berkolaborasi, dan
+                            tumbuh bersama demi mendukung kreativitas anak bangsa.
                         </p>
                     </div>
                 </div>
                 <div class="col-lg-6  col-md-6 col-sm-6">
                     <div class="single-footer-widget">
                         <h6>Newsletter</h6>
-                        <p>Stay update with our latest</p>
+                        <p class="text-white">Stay update with our latest</p>
                         <div class="" id="mc_embed_signup">
 
                             <form target="_blank" novalidate="true"
@@ -136,17 +318,15 @@
                 <div class="col-lg-2 col-md-6 col-sm-6">
                     <div class="single-footer-widget">
                         <h6>Follow Us</h6>
-                        <p>Let us be social</p>
+                        <p class="text-white">Let us be social</p>
                         <div class="footer-social d-flex align-items-center">
-                            <a href="#" style="color: white;"><span class="ti-facebook"></span></i></a>
-                            <a href="#" style="color: white;"><span class="ti-instagram"></span></i></a>
-                            <a href="#" style="color: white;"><span class="ti-github"></span></i></a>
+                            <a href="https://instagram.com/pmw.karyalokal" style="color: white;"><span class="ti-instagram"></span></i></a>    
                         </div>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom d-flex justify-content-center align-items-center flex-wrap">
-                <p class="footer-text m-0">
+                <p class="footer-text m-0 text-white">
                     <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     Copyright &copy;
                     <script>
@@ -170,22 +350,22 @@
             registerForm.classList.toggle('d-none');
         }
     </script>
-    <script src="/assets/js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="{{ asset('assets/js/vendor/jquery-2.2.4.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
         integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous">
     </script>
-    <script src="/assets/js/vendor/bootstrap.min.js"></script>
-    <script src="/assets/js/jquery.ajaxchimp.min.js"></script>
-    <script src="/assets/js/jquery.nice-select.min.js"></script>
-    <script src="/assets/js/jquery.sticky.js"></script>
-    <script src="/assets/js/nouislider.min.js"></script>
-    <script src="/assets/js/countdown.js"></script>
-    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
-    <script src="/assets/js/owl.carousel.min.js"></script>
+    <script src="{{ asset('assets/js/vendor/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.ajaxchimp.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.sticky.js') }}"></script>
+    <script src="{{ asset('assets/js/nouislider.min.js') }}"></script>
+    <script src="{{ asset('assets/js/countdown.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
     <!--gmaps Js-->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
-    <script src="/assets/js/gmaps.min.js"></script>
-    <script src="/assets/js/main.js"></script>
+    <script src="{{ asset('assets/js/gmaps.min.js') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -254,6 +434,45 @@
         });
     </script>
     @stack('scripts-footer')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // TAMBAHKAN ATAU PASTIKAN BLOK INI ADA
+            // Script untuk menampilkan nama file di custom file input Bootstrap
+            document.querySelectorAll('.custom-file-input').forEach(function(input) {
+                input.addEventListener('change', function(e) {
+                    let fileName = e.target.files[0] ? e.target.files[0].name : 'Pilih file...';
+                    let nextSibling = e.target.nextElementSibling;
+                    if (nextSibling && nextSibling.classList.contains('custom-file-label')) {
+                        nextSibling.innerText = fileName;
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar-wrapper');
+            const overlay = document.getElementById('sidebar-overlay');
+            const openBtn = document.getElementById('sidebar-toggler');
+            const closeBtn = document.getElementById('close-sidebar');
+
+            function openSidebar() {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+
+            if (openBtn) openBtn.addEventListener('click', openSidebar);
+            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+        });
+    </script>
 </body>
 
 </html>

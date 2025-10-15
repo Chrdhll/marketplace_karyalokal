@@ -24,69 +24,66 @@ class ProfilFreelanceController extends Controller
 
     // app/Http/Controllers/Freelancer/ProfilFreelanceController.php
 
-   public function update(Request $request)
-{
-    $user = Auth::user();
+    public function update(Request $request)
+    {
+        $user = Auth::user();
 
-    // Cek apakah ini submission pertama kali (sebelumnya belum ada bio)
-    $isFirstSubmission = !$user->bio; 
-    
-    // VALIDASI YANG DISEMPURNAKAN
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'username' => [
-            'required',
-            'string',
-            'max:50',
-            'alpha_dash', // Hanya boleh huruf, angka, strip (-), dan underscore (_)
-            Rule::unique('users')->ignore($user->id), // Unik, kecuali untuk user ini sendiri
-        ],
-        'email' => [
-            'required',
-            'email',
-            Rule::unique('users')->ignore($user->id), // Email juga harus unik
-        ],
-        'headline' => 'nullable|string|max:255',
-        'bio' => 'nullable|string|max:1000',
-        'location' => 'nullable|string|max:255',
-        'company_name' => 'nullable|string|max:255',
-        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'cv_file_path' => [ 
-            Rule::requiredIf(!$user->cv_file_path),
-            'nullable', 'file', 'mimes:pdf', 'max:5120'
-        ],
-        'portfolio' => [
-            Rule::requiredIf(!$user->portfolio),
-            'nullable', 'file', 'mimes:pdf', 'max:5120'
-        ],
-    ]);
+        // 1. Validasi semua data yang berhubungan dengan PROFIL FREELANCER
+        $validatedData = $request->validate([
+            'headline' => 'nullable|string|max:255',
+            'bio' => 'nullable|string|max:1000',
+            'keahlian' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'cv_file_path' => [ 
+                Rule::requiredIf(!$user->freelancerProfile?->cv_file_path),
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:5120'
+            ],
+            'portfolio' => [
+                Rule::requiredIf(!$user->freelancerProfile?->portfolio),
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:5120'
+            ],
+        ]);
 
-    // Mengambil semua data input teks
-    $dataToUpdate = $request->only([
-        'name', 'username', 'email', 'headline', 'bio', 'keahlian', 'location', 'company_name'
-    ]);
+        // 2. Siapkan data TEKS dari hasil validasi untuk disimpan/diupdate
+        $profileData = [
+            'headline' => $validatedData['headline'],
+            'bio' => $validatedData['bio'],
+            'keahlian' => $validatedData['keahlian'] ?? null,
+            'location' => $validatedData['location'],
+        ];
 
-    // LOGIKA STATUS BARU
-    if ($isFirstSubmission) {
-        $dataToUpdate['profile_status'] = 'pending';
+        // 3. Cek apakah ini submission pertama kali, jika ya, set status 'pending'
+        if (!$user->freelancerProfile) {
+            $profileData['profile_status'] = 'pending';
+        }
+
+        // 4. Handle file uploads dan tambahkan path-nya ke data yang akan disimpan
+        if ($request->hasFile('cv_file_path')) {
+            if ($user->freelancerProfile?->cv_file_path) {
+                Storage::disk('public')->delete($user->freelancerProfile->cv_file_path);
+            }
+            $profileData['cv_file_path'] = $request->file('cv_file_path')->store('cvs', 'public');
+        }
+        if ($request->hasFile('portfolio')) {
+            if ($user->freelancerProfile?->portfolio) {
+                Storage::disk('public')->delete($user->freelancerProfile->portfolio);
+            }
+            $profileData['portfolio'] = $request->file('portfolio')->store('portfolios', 'public');
+        }
+
+        // 5. Simpan ke tabel freelancer_profiles menggunakan relasi updateOrCreate
+        $user->freelancerProfile()->updateOrCreate(
+            ['user_id' => $user->id], // Kunci untuk mencari/membuat
+            $profileData  // Data untuk diisi
+        );
+
+        // 6. Redirect ke halaman "Lihat Profil"
+        return redirect()->route('freelancer.profil.show')->with('success', 'Profil profesional berhasil diperbarui!');
     }
-
-    // HANDLE FILE UPLOAD
-    if ($request->hasFile('profile_picture')) {
-        if ($user->profile_picture_path) Storage::disk('public')->delete($user->profile_picture_path);
-        $dataToUpdate['profile_picture_path'] = $request->file('profile_picture')->store('profile-pictures', 'public');
-    }
-    if ($request->hasFile('cv_file_path')) { 
-        if ($user->cv_file_path) Storage::disk('public')->delete($user->cv_file_path);
-        $dataToUpdate['cv_file_path'] = $request->file('cv_file_path')->store('cvs', 'public');
-    }
-    if ($request->hasFile('portfolio')) {
-        if ($user->portfolio) Storage::disk('public')->delete($user->portfolio);
-        $dataToUpdate['portfolio'] = $request->file('portfolio')->store('portfolios', 'public');
-    }
-
-    $user->update($dataToUpdate);
-    
-    return redirect()->route('freelancer.profil.show')->with('success', 'Profil berhasil diperbarui!');
-}
 }

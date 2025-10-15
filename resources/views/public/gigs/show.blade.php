@@ -7,7 +7,7 @@
     <div class="product_image_area mt-5">
         <div class="container">
             <div class="row s_product_inner">
-                <div class="col-lg-6">
+                 <div class="col-lg-6">
                     {{-- Menampilkan satu gambar utama, karena kita belum punya fitur galeri --}}
                     <div class="single-prd-item">
                         <img class="img-fluid"
@@ -20,12 +20,32 @@
                         <h3>{{ $gig->title }}</h3>
                         <h2>Rp {{ number_format($gig->price, 0, ',', '.') }}</h2>
                         <ul class="list">
-                            <li><a class="active" href="#"><span>Kategori</span> : {{ $gig->service }}</a></li>
+                            <li><a class="active"
+                                    href="{{ route('public.gigs.index', ['category' => $gig->category->slug]) }}"><span>Kategori</span>
+                                    : {{ $gig->category?->name }}</a>
+                            </li>
                             <li><a href="#"><span>Estimasi</span> : {{ $gig->estimated_time }}</a></li>
                         </ul>
                         <p>{{ \Illuminate\Support\Str::limit($gig->description, 200) }}</p>
                         <div class="card_area d-flex align-items-center">
-                            <a class="primary-btn" href="{{ route('checkout', $gig->id) }}">Pesan Jasa Ini</a>
+                            @auth
+                                {{-- JIKA SUDAH ADA PESANAN PENDING --}}
+                                @if ($pendingOrder)
+                                    <a class="primary-btn" href="{{ route('payment.show', $pendingOrder->id) }}">
+                                        Lanjutkan Pembayaran
+                                    </a>
+                                    <p class="ml-3 text-muted">Anda punya pesanan yang belum dibayar.</p>
+
+                                    {{-- JIKA USER ADALAH KLIEN & BUKAN PEMILIK --}}
+                                @elseif (auth()->id() !== $gig->user_id)
+                                    <a class="primary-btn" href="{{ route('checkout', $gig->slug) }}">Pesan Jasa Ini</a>
+                                @else
+                                    <a class="primary-btn" href="{{ route('freelancer.gigs.edit', $gig->slug) }}">Kelola Jasa
+                                        Ini</a>
+                                @endif
+                            @else
+                                <a class="primary-btn" href="{{ route('login') }}">Login untuk Memesan</a>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -74,7 +94,8 @@
                                         <h5>Kategori</h5>
                                     </td>
                                     <td>
-                                        <h5>{{ $gig->service }}</h5>
+                                        <h5><a href="{{ route('public.gigs.index', ['category' => $gig->category->slug]) }}"
+                                                class="active">{{ $gig->category->name }}</a></h5>
                                     </td>
                                 </tr>
                                 <tr>
@@ -161,7 +182,8 @@
                                             <textarea class="form-control" name="comment" rows="4" placeholder="Tulis ulasan Anda di sini..." required></textarea>
                                         </div>
                                         <div class="col-md-12 text-right">
-                                            <button type="submit" value="submit" class="primary-btn">Kirim Ulasan</button>
+                                            <button type="submit" value="submit" class="primary-btn">Kirim
+                                                Ulasan</button>
                                         </div>
                                     </form>
                                 @else

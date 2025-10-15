@@ -11,8 +11,14 @@
     <section class="section_gap mt-5">
         <div class="container my-5 text-center">
             <h1>Selesaikan Pembayaran Anda</h1>
-            <p>Pesanan #{{ $order->id }} telah dibuat. Silakan lanjutkan pembayaran.</p>
+            <p>Pesanan {{ $order->order_number }} telah dibuat. Silakan lanjutkan pembayaran.</p>
             <button id="pay-button" class="btn btn-success btn-lg">Bayar Sekarang</button>
+            <form action="{{ route('order.cancel', $order->id) }}" method="POST" class="mt-3"
+                onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-link text-danger">Batalkan Pesanan</button>
+            </form>
         </div>
     </section>
 @endsection
@@ -27,7 +33,8 @@
                 onSuccess: function(result) {
                     /* Kamu bisa tambahkan aksi di sini, misalnya redirect */
                     alert("payment success!");
-                    window.location.href = "{{ route('order.index') }}";
+                    // KODE BARU
+                    window.location.replace("{{ route('order.index') }}?payment=success");
                 },
                 onPending: function(result) {
                     /* Aksi jika pembayaran pending */
@@ -47,3 +54,20 @@
         });
     </script>
 @endpush
+
+{{-- @push('scripts-footer')
+<script type="text/javascript">
+  // Script untuk memicu Midtrans Snap
+  document.getElementById('pay-button').addEventListener('click', function () {
+    window.snap.pay('{{ $snapToken }}', {
+      onSuccess: function(result){
+        // Gunakan replace agar tidak bisa di-"back"
+        window.location.replace("{{ route('order.index') }}?payment=success");
+      },
+      // ...
+    });
+  });
+
+  window.history.replaceState(null, null, "{{ route('index') }}"); 
+</script>
+@endpush --}}

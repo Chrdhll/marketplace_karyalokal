@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Models\Order;
 use App\Models\Review;
-use App\Observers\ReviewObserver;
-use Illuminate\Support\Facades\View; // <-- TAMBAHKAN INI
 use App\Models\Category;
+use App\Observers\ReviewObserver;
+use App\Observers\OrderObserver; 
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View; 
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Review::observe(ReviewObserver::class);
+        Order::observe(OrderObserver::class);
         View::share('sharedCategories', Category::all());
+        Paginator::defaultView('vendor.pagination.karyalokal');
     }
 }

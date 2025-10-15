@@ -11,21 +11,23 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class StatsOverview extends BaseWidget
 {
     protected static ?int $sort = 1;
+
     protected function getStats(): array
     {
-        
-        // Hitung total pendapatan dari pesanan yang sudah selesai
-        $totalRevenue = Order::where('status', 'completed')->sum('total_price');
+        // Menghitung PENDAPATAN BERSIH PLATFORM (Komisi 10%)
+        $totalRevenue = Order::where('status', 'completed')->sum('platform_fee');
 
-        // Hitung jumlah pesanan baru (yang sudah dibayar) bulan ini
+        // Menghitung jumlah pesanan baru (yang sudah dibayar) bulan ini
         $newOrdersCount = Order::where('status', 'paid')->whereMonth('created_at', now()->month)->count();
 
-        // Hitung total freelancer yang aktif
-        $freelancerCount = User::where('role', 'freelancer')->where('profile_status', 'approved')->count();
+        // Menghitung total freelancer yang aktif
+        $freelancerCount = User::whereHas('freelancerProfile', function ($query) {
+            $query->where('profile_status', 'approved');
+        })->count();
 
         return [
-            Stat::make('Total Pendapatan', 'Rp ' . number_format($totalRevenue))
-                ->description('Dari semua pesanan yang selesai')
+            Stat::make('Pendapatan Platform', 'Rp ' . number_format($totalRevenue))
+                ->description('Total komisi 10% dari semua pesanan selesai')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),
             Stat::make('Pesanan Baru (Bulan Ini)', $newOrdersCount)

@@ -28,16 +28,21 @@ class SocialiteController extends Controller
             $googleUser = Socialite::driver('google')->user();
 
             // Langkah 1: Cari user berdasarkan EMAIL, bukan google_id
-            $user = User::where('email', $googleUser->getEmail())->first();
+            $user = User::withTrashed()->where('email', $googleUser->getEmail())->first();
 
+            // Jika user ditemukan tapi statusnya "dihapus" (trashed)
             if ($user) {
-                // Cukup update google_id-nya jika masih kosong, lalu simpan.
-                // Tidak ada update password atau data lain yang berisiko.
+                // Jika user ditemukan tapi statusnya "dihapus" (trashed)
+                  if ($user->trashed()) {
+        // Jangan langsung restore, tapi arahkan ke halaman reaktivasi
+                    return redirect()->route('reactivate.notice')->with('email', $user->email);
+                    }
+
+                // Update google_id jika perlu (untuk user lama yg baru pertama kali login Google)
                 if (!$user->google_id) {
                     $user->google_id = $googleUser->getId();
                     $user->save();
                 }
-
                 // Langkah 2B: Jika user BELUM ADA
             } else {
                 // Buat username unik dari nama email
@@ -47,11 +52,11 @@ class SocialiteController extends Controller
                 $user = User::create([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
-                    'username' => $username, 
+                    'username' => $username,
                     'google_id' => $googleUser->getId(),
                     'role' => 'client',
                     'email_verified_at' => now(),
-                    'password' =>null,
+                    'password' => null,
                 ]);
             }
 

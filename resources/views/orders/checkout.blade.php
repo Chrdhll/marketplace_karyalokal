@@ -10,7 +10,7 @@
                     <p><strong>Jasa:</strong> {{ $gig->title }}</p>
                     <p><strong>Freelancer:</strong> {{ $gig->user->name }}</p>
                     <p><strong>Harga:</strong> Rp {{ number_format($gig->price, 0, ',', '.') }}</p>
-                    <form action="{{ route('checkout.process', $gig->id) }}" method="POST" id="checkout-form">
+                    <form action="{{ route('checkout.process', $gig->slig) }}" method="POST" id="checkout-form">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-lg">Lanjutkan ke Pembayaran</button>
                     </form>

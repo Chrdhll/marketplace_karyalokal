@@ -164,3 +164,13 @@
     </section>
 
 @endsection
+
+@push('styles')
+    <style>
+        @media (max-width: 991.98px) {
+            .login_box_area .login_box_img {
+                margin-right: 0;
+            }
+        }
+    </style>
+@endpush

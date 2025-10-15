@@ -5,17 +5,30 @@
 @section('content')
     <section class="section_gap mt-5">
         <div class="container py-8">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="text-2xl font-bold">Jasa (Gigs) Anda</h1>
-                <a href="{{ route('freelancer.gigs.create') }}" class="btn btn-primary">Tambah Jasa Baru</a>
+            <div class="d-lg-flex justify-content-lg-between align-items-lg-center text-center text-lg-left mb-4">
+
+                <h1 class="text-2xl font-bold">Jasa Anda</h1>
+                <a href="{{ route('freelancer.gigs.create') }}" class="primary-btn">Tambah Jasa Baru</a>
+
             </div>
 
             {{-- Notifikasi Sukses/Error --}}
             @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             @endif
+            {{-- 2. Alert Error (jika ditendang oleh middleware) --}}
             @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             @endif
 
             <div class="row">
@@ -29,10 +42,10 @@
                                 <p class="card-text text-muted">{{ $gig->service }}</p>
                                 <p class="card-text font-weight-bold">Rp {{ number_format($gig->price, 0, ',', '.') }}</p>
                                 <div class="mt-auto d-flex justify-content-between">
-                                    <a href="{{ route('freelancer.gigs.edit', $gig->id) }}"
+                                    <a href="{{ route('freelancer.gigs.edit', $gig->slug) }}"
                                         class="btn btn-sm btn-secondary">Edit</a>
 
-                                    <form action="{{ route('freelancer.gigs.destroy', $gig->id) }}" method="POST"
+                                    <form action="{{ route('freelancer.gigs.destroy', $gig->slug) }}" method="POST"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus jasa ini?');">
                                         @csrf
                                         @method('DELETE')

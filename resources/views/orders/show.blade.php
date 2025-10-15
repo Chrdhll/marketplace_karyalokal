@@ -1,11 +1,11 @@
-@extends('layouts.template')
+@extends(auth()->id() == $order->freelancer_id ? 'layouts.freelancer' : 'layouts.template')
 
-@section('title', 'Detail Pesanan #' . $order->id)
+@section('title', 'Detail Pesanan ' . $order->order_number)
 
 @section('content')
     <section class="section_gap mt-5">
         <div class="container my-5">
-            <h1 class="mb-4">Detail Pesanan <span class="text-primary">#{{ $order->id }}</span></h1>
+            <h1 class="mb-4">Detail Pesanan <span class="text-primary">{{ $order->order_number }}</span></h1>
 
             <div class="row">
                 <div class="col-lg-8">
@@ -119,7 +119,7 @@
                             <h5>Ringkasan</h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>ID Pesanan:</strong> #{{ $order->id }}</p>
+                            <p><strong>ID Pesanan:</strong> {{ $order->order_number }}</p>
                             <p><strong>Tanggal Pesan:</strong> {{ $order->created_at->format('d M Y, H:i') }}</p>
                             <p><strong>Status:</strong>
                                 <span class="badge badge-info">{{ ucfirst(str_replace('_', ' ', $order->status)) }}</span>

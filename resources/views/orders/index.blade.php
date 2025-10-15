@@ -32,14 +32,15 @@
                                     <tbody>
                                         @forelse ($orders as $order)
                                             <tr>
-                                                <th scope="row">#{{ $order->id }}</th>
+                                                <th scope="row">{{ $order->order_number }}</th>
                                                 <td>
                                                     <a href="{{ route('public.gigs.show', $order->gig->id) }}">
                                                         {{ $order->gig->title }}
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('public.freelancer.show', $order->freelancer->username) }}">
+                                                    <a
+                                                        href="{{ route('public.freelancer.show', $order->freelancer->username) }}">
                                                         {{ $order->freelancer->name }}
                                                     </a>
                                                 </td>
@@ -61,29 +62,45 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex">
-                                                    @if ($order->status == 'completed')
-                                                        {{-- Tombol Download akan selalu muncul jika file ada & pesanan selesai --}}
-                                                        @if ($order->delivered_file_path)
-                                                            <a href="{{ route('order.download', $order->id) }}"
-                                                                class="btn btn-sm btn-success mb-1 d-block">
-                                                                <i class="fa fa-download"></i> Download Hasil
+                                                    <div class="d-flex m-1">
+                                                        @if ($order->status == 'pending')
+                                                            <a href="{{ route('payment.show', $order->id) }}"
+                                                                class="btn btn-sm btn-warning mr-1">
+                                                                Lanjutkan Pembayaran
                                                             </a>
-                                                        @endif
 
-                                                        {{-- Tombol Ulasan hanya muncul jika pesanan selesai DAN belum ada review --}}
-                                                        @if (!$order->review)
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-primary d-block w-100"
-                                                                data-toggle="modal"
-                                                                data-target="#reviewModal-{{ $order->id }}">
-                                                                <i class="fa fa-star"></i> Beri Ulasan
-                                                            </button>
+                                                            {{-- TOMBOL BATAL BARU --}}
+                                                            <form action="{{ route('order.cancel', $order->id) }}"
+                                                                method="POST"
+                                                                onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-outline-danger w-100">Batalkan</button>
+                                                            </form>
+                                                        @elseif ($order->status == 'completed')
+                                                            {{-- Tombol Download akan selalu muncul jika file ada & pesanan selesai --}}
+                                                            @if ($order->delivered_file_path)
+                                                                <a href="{{ route('order.download', $order->id) }}"
+                                                                    class="btn btn-sm btn-success d-block mr-1">
+                                                                    <i class="fa fa-download"></i> Download Hasil
+                                                                </a>
+                                                            @endif
+
+                                                            {{-- Tombol Ulasan hanya muncul jika pesanan selesai DAN belum ada review --}}
+                                                            {{-- Tombol Ulasan (diubah menjadi <a>) --}}
+                                                            @if (!$order->review)
+                                                                <a href="#" class="btn btn-sm btn-primary d-block"
+                                                                    data-toggle="modal"
+                                                                    data-target="#reviewModal-{{ $order->uuid }}">
+                                                                    <i class="fa fa-star"></i> Beri Ulasan
+                                                                </a>
+                                                            @endif
+                                                        @else
+                                                            {{-- Untuk status lain (pending, in_progress, dll), tampilkan tombol Detail --}}
+                                                            <a href="{{ route('order.show', $order->id) }}"
+                                                                class="btn btn-sm btn-outline-primary ml-2">Lihat Detail</a>
                                                         @endif
-                                                    @endif
-                                                    {{-- Untuk status lain (pending, in_progress, dll), tampilkan tombol Detail --}}
-                                                    <a href="{{ route('order.show', $order->id) }}"
-                                                        class="btn btn-sm btn-outline-primary ml-2">Lihat Detail</a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -113,12 +130,12 @@
 {{-- Taruh di luar @endsection, atau di dalamnya sebelum @endsection --}}
 @foreach ($orders as $order)
     @if ($order->status == 'completed' && !$order->review)
-        <div class="modal fade" id="reviewModal-{{ $order->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="reviewModalLabel-{{ $order->id }}" aria-hidden="true">
+        <div class="modal fade" id="reviewModal-{{ $order->uuid }}" tabindex="-1" role="dialog"
+            aria-labelledby="reviewModalLabel-{{ $order->uuid }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="reviewModalLabel-{{ $order->id }}">Beri Ulasan untuk:
+                        <h5 class="modal-title" id="reviewModalLabel-{{ $order->uuid }}">Beri Ulasan untuk:
                             {{ $order->gig->title }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>

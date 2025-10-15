@@ -20,23 +20,15 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $fillable = [
+        'id',
         'name',
         'username',
         'email',
         'password',
         'role',
+        'profile_picture_path',
         'google_id',
         'email_verified_at',
-        'profile_status',
-        'profile_picture_path',
-        'headline',
-        'bio',
-        'portfolio',
-        'cv_file_path',
-        'location',
-        'company_name',
-        'rating_average',
-        'review_count',
     ];
 
     /**
@@ -113,6 +105,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isApprovedFreelancer(): bool
     {
-        return $this->role === 'freelancer' && $this->profile_status === 'approved';
+        return $this->freelancerProfile && $this->freelancerProfile->profile_status === 'approved';
     }
+
+    public function freelancerProfile()
+    {
+        return $this->hasOne(FreelancerProfile::class, 'user_id');
+    }
+
+// User bisa punya banyak riwayat penarikan
+public function withdrawals() { return $this->hasMany(Withdrawal::class); }
 }

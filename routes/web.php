@@ -10,12 +10,18 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\PublicGigController;
+use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Freelancer\GigController;
 use App\Http\Controllers\PublicFreelancerController;
+use App\Http\Controllers\Auth\ReactivationController;
+use App\Http\Controllers\Freelancer\ReportController;
+use App\Http\Controllers\Freelancer\FinanceController;
 use App\Http\Controllers\Freelancer\DashboardController;
 use App\Http\Controllers\Freelancer\ProfilFreelanceController;
 use App\Http\Controllers\Freelancer\OrderController as FreelancerOrderController;
+use App\Http\Controllers\Freelancer\ReviewController as FreelancerReviewController;
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -23,7 +29,6 @@ use App\Http\Controllers\Freelancer\OrderController as FreelancerOrderController
 
 Route::get('/blog', [PageController::class, 'blog'])->name('blog');
 Route::get('/single-product', [PageController::class, 'singleProduct'])->name('single-product');
-Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::get('/category', [PageController::class, 'category'])->name('category');
 Route::get('/confirmation', [PageController::class, 'confirmation'])->name('confirmation');
 Route::get('/', [PageController::class, 'index'])->name('index');
@@ -34,7 +39,7 @@ Route::post('/contact', [PageController::class, 'contactProccess'])->name('conta
 
 Route::get('/freelancers/{user:username}', [PublicFreelancerController::class, 'show'])->name('public.freelancer.show');
 
-Route::get('/gigs/{gig}', [PublicGigController::class, 'show'])->name('public.gigs.show');
+Route::get('/gigs/{gig:slug}', [PublicGigController::class, 'show'])->name('public.gigs.show');
 
 Route::get('/gigs', [PublicGigController::class, 'index'])->name('public.gigs.index');
 
@@ -44,6 +49,10 @@ Route::post('/midtrans-webhook', [WebhookController::class, 'handle'])->name('mi
 // Route::get('/', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/account/reactivate', [ReactivationController::class, 'showNotice'])->name('reactivate.notice');
+Route::post('/account/reactivate', [ReactivationController::class, 'reactivate'])->name('reactivate.process');
+
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::get('/dashboard', function () {
@@ -69,21 +78,24 @@ Route::middleware('auth', 'verified')->group(function () {
     // Route untuk memproses pembuatan pesanan baru
     // Route::post('/order/{gig}', [OrderController::class, 'store'])->name('order.store');
 
-    Route::get('/checkout/{gig}', [OrderController::class, 'checkout'])->name('checkout')->middleware('can.order');
-    Route::post('/checkout/{gig}', [OrderController::class, 'processCheckout'])->name('checkout.process')->middleware('can.order');
+    Route::get('/checkout/{gig:slug}', [OrderController::class, 'checkout'])->name('checkout')->middleware('can.order');
+    Route::post('/checkout/{gig:slug}', [OrderController::class, 'processCheckout'])->name('checkout.process')->middleware('can.order');
+    Route::get('/payment/{order:uuid}', [OrderController::class, 'showPayment'])->name('payment.show')->middleware('auth');
 
+    Route::get('/payment/{order:uuid}', [OrderController::class, 'showPayment'])->name('payment.show');
+    Route::delete('/orders/{order:uuid}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
 
-    Route::post('/reviews/{order}', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/reviews/{order:uuid}', [ReviewController::class, 'store'])->name('reviews.store');
 
     // routes/web.php
-    Route::get('/orders/{order}/download', [OrderController::class, 'downloadDelivery'])->name('order.download');
+    Route::get('/orders/{order:uuid}/download', [OrderController::class, 'downloadDelivery'])->name('order.download');
 
     // routes/web.php
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('order.show');
+    Route::get('/orders/{order:uuid}', [OrderController::class, 'show'])->name('order.show');
 
-    Route::post('/orders/{order}/messages', [OrderController::class, 'postMessage'])->name('order.messages.store');
+    Route::post('/orders/{order:uuid}/messages', [OrderController::class, 'postMessage'])->name('order.messages.store');
 
-    Route::post('/wishlist/{gig}/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::post('/wishlist/{gig:slug}/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 });
 
@@ -96,10 +108,24 @@ Route::middleware(['auth', 'verified'])->prefix('freelancer')->name('freelancer.
 
     Route::get('/orders', [FreelancerOrderController::class, 'index'])->name('orders.index')->middleware('approved.freelancer');
 
-    Route::post('/orders/{order}/deliver', [FreelancerOrderController::class, 'deliverWork'])->name('orders.deliver');
-    Route::patch('/orders/{order}/update-status', [FreelancerOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::post('/orders/{order:uuid}/deliver', [FreelancerOrderController::class, 'deliverWork'])->name('orders.deliver')->middleware('approved.freelancer');
+    Route::patch('/orders/{order:uuid}/update-status', [FreelancerOrderController::class, 'updateStatus'])->name('orders.updateStatus')->middleware('approved.freelancer');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('approved.freelancer');
+
+     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('approved.freelancer');
+    Route::get('/reviews', [FreelancerReviewController::class, 'index'])->name('reviews.index')->middleware('approved.freelancer');
+
+ 
+    Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf')->middleware('approved.freelancer');
+    Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel')->middleware('approved.freelancer');
+    // routes/web.php
+    Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print')->middleware('approved.freelancer');
+
+     // RUTE BARU UNTUK FITUR FINANSIAL
+    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index')->middleware('approved.freelancer');;
+    Route::resource('bank-accounts', BankAccountController::class)->only(['store', 'destroy'])->middleware('approved.freelancer');;
+    Route::post('/withdrawals', [FinanceController::class, 'requestWithdrawal'])->name('withdrawals.request')->middleware('approved.freelancer');;
 });
 
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle'])->name('google.redirect');

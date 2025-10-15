@@ -47,7 +47,7 @@
                         @forelse ($gigs as $gig)
                             <div class="col-md-6 mb-4">
                                 <div class="card h-100 shadow-sm">
-                                    <a href="{{ route('public.gigs.show', $gig->id) }}">
+                                    <a href="{{ route('public.gigs.show', $gig->slug) }}">
                                     <img src="{{ $gig->cover_image_path ? Storage::url($gig->cover_image_path) : 'https://via.placeholder.com/300x200' }}"
                                         class="card-img-top" alt="{{ $gig->title }}"
                                         style="height: 180px; object-fit: cover;">
@@ -55,7 +55,7 @@
                                     <div class="card-body">
                                         <p class="card-text text-muted">{{ $gig->service }}</p>
                                         <h5 class="card-title" style="min-height: 50px;">
-                                            <a href="{{ route('public.gigs.show', $gig->id) }}">{{ $gig->title }}</a>
+                                            <a href="{{ route('public.gigs.show', $gig->slug) }}">{{ $gig->title }}</a>
                                         </h5>
                                         <p class="card-text font-weight-bold">
                                             Rp {{ number_format($gig->price, 0, ',', '.') }}

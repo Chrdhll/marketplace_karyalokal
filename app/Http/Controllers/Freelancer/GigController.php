@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Freelancer;
 
-use App\Http\Controllers\Controller;
 use App\Models\Gig;
+use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Category;
 
 class GigController extends Controller
 {
@@ -43,13 +44,15 @@ class GigController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
+        $validated['slug'] = Str::slug($validated['title']) . '-' . uniqid();
+
         if ($request->hasFile('cover_image')) {
             $validated['cover_image_path'] = $request->file('cover_image')->store('gig-covers', 'public');
         }
 
         Auth::user()->gigs()->create($validated);
 
-        return redirect()->route('freelancer.gigs.index')->with('success', 'Jasa (Gig) berhasil ditambahkan!');
+        return redirect()->route('freelancer.gigs.index')->with('success', 'Jasa berhasil ditambahkan!');
     }
 
     /**
@@ -71,7 +74,7 @@ class GigController extends Controller
             abort(403, 'AKSES DITOLAK');
         }
         $categories = Category::orderBy('name', 'asc')->get(); // Ambil semua kategori
-        return view('freelancer.gigs.edit', compact('gig', 'categories')); 
+        return view('freelancer.gigs.edit', compact('gig', 'categories'));
     }
 
     /**
@@ -94,6 +97,10 @@ class GigController extends Controller
         ]);
 
         $dataToUpdate = $request->only(['title', 'description', 'price', 'estimated_time', 'category_id']);
+
+        if ($request->has('title')) {
+            $dataToUpdate['slug'] = \Illuminate\Support\Str::slug($request->title) . '-' . uniqid();
+        }
 
         if ($request->hasFile('cover_image')) {
             // Hapus gambar lama sebelum upload yang baru

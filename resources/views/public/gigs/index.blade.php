@@ -13,7 +13,8 @@
                         <a href="{{ route('index') }}">Home<span class="lnr lnr-arrow-right"></span></a>
                         <a href="{{ route('public.gigs.index') }}">Jasa</a>
                         @if ($activeCategory)
-                            <span class="lnr lnr-arrow-right mx-2 text-white"></span><a href="#">{{ $activeCategory->name }}</a>
+                            <span class="lnr lnr-arrow-right mx-2 text-white"></span><a
+                                href="#">{{ $activeCategory->name }}</a>
                         @endif
                     </nav>
                 </div>
@@ -51,24 +52,35 @@
             </div>
             <div class="col-xl-9 col-lg-8 col-md-7">
                 <div class="filter-bar d-flex flex-wrap align-items-center">
-                    <form id="filterForm" action="{{ route('public.gigs.index') }}" method="GET" class="d-flex">
-                        {{-- Simpan filter kategori yang sedang aktif --}}
-                        @if (request('category'))
-                            <input type="hidden" name="category" value="{{ request('category') }}">
-                        @endif
-                        <div class="sorting">
-                            <select name="sort" onchange="document.getElementById('filterForm').submit();" class="filter-nice-select">
-                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
-                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga
-                                    Terendah</option>
-                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Harga
-                                    Tertinggi</option>
-                            </select>
+                    <div class="row w-100 align-items-center">
+
+                        {{-- Kolom Kiri untuk Sorting --}}
+                        <div class="col-lg-6 col-md-6">
+                            <form id="filterForm" action="{{ route('public.gigs.index') }}" method="GET">
+                                @if (request('category'))
+                                    <input type="hidden" name="category" value="{{ request('category') }}">
+                                @endif
+                                <div class="sorting">
+                                    <select name="sort" onchange="document.getElementById('filterForm').submit();"
+                                        class="filter-nice-select">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru
+                                        </option>
+                                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
+                                            Harga Terendah</option>
+                                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                            Harga Tertinggi</option>
+                                    </select>
+                                </div>
+                            </form>
                         </div>
-                    </form>
-                    <div class="ml-auto">
-                        {{-- Tampilkan pagination di sini --}}
-                        {{ $gigs->appends(request()->query())->links() }}
+
+                        {{-- Kolom Kanan untuk Pagination --}}
+                        <div class="col-lg-6 col-md-6">
+                            <div class="d-flex justify-content-end">
+                                {{ $gigs->appends(request()->query())->links() }}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <section class="lattest-product-area pb-40 category-list">
@@ -76,7 +88,7 @@
                         @forelse ($gigs as $gig)
                             <div class="col-lg-4 col-md-6">
                                 <div class="single-product">
-                                    <a href="{{ route('public.gigs.show', $gig->id) }}">
+                                    <a href="{{ route('public.gigs.show', $gig->slug) }}">
                                         <img class="img-fluid"
                                             src="{{ $gig->cover_image_path ? Storage::url($gig->cover_image_path) : 'https://via.placeholder.com/300x200' }}"
                                             alt="{{ $gig->title }}" style="height: 180px; object-fit: cover;">
@@ -106,14 +118,14 @@
                                             {{--         IKON 2: WISHLIST (TEKNIK BARU)          --}}
                                             {{-- ============================================= --}}
 
-                                            <form id="wishlist-form-{{ $gig->id }}"
-                                                action="{{ route('wishlist.toggle', $gig->id) }}" method="POST"
+                                            <form id="wishlist-form-{{ $gig->slug }}"
+                                                action="{{ route('wishlist.toggle', $gig->slug) }}" method="POST"
                                                 style="display: none;">
                                                 @csrf
                                             </form>
 
                                             <a href="#" class="social-info"
-                                                onclick="event.preventDefault(); document.getElementById('wishlist-form-{{ $gig->id }}').submit();">
+                                                onclick="event.preventDefault(); document.getElementById('wishlist-form-{{ $gig->slug }}').submit();">
                                                 @if (auth()->check() && auth()->user()->wishlistedGigs->contains($gig))
                                                     {{-- Tampilan jika sudah di-wishlist --}}
                                                     <span class="fa fa-heart" style="color: red;"></span>
@@ -128,7 +140,7 @@
                                             {{-- ============================================= --}}
 
                                             {{-- IKON 3: LINK BIASA --}}
-                                            <a href="{{ route('public.gigs.show', $gig->id) }}" class="social-info">
+                                            <a href="{{ route('public.gigs.show', $gig->slug) }}" class="social-info">
                                                 <span class="lnr lnr-move"></span>
                                                 <p class="hover-text">Lihat Jasa</p>
                                             </a>
@@ -170,28 +182,6 @@
                         @endforelse
                     </div>
                 </section>
-                <div class="filter-bar d-flex flex-wrap align-items-center">
-                    <form id="filterForm" action="{{ route('public.gigs.index') }}" method="GET" class="d-flex">
-                        {{-- Simpan filter kategori yang sedang aktif --}}
-                        @if (request('category'))
-                            <input type="hidden" name="category" value="{{ request('category') }}">
-                        @endif
-                        <div class="sorting">
-                            <select name="sort" onchange="document.getElementById('filterForm').submit();" class="filter-nice-select">
-                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru
-                                </option>
-                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga
-                                    Terendah</option>
-                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Harga
-                                    Tertinggi</option>
-                            </select>
-                        </div>
-                    </form>
-                    <div class="ml-auto">
-                        {{-- Tampilkan pagination di sini --}}
-                        {{ $gigs->appends(request()->query())->links() }}
-                    </div>
-                </div>
             </div>
         </div>
     </div>

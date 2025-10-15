@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Gig;
 use App\Models\Order;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,25 +12,39 @@ class PublicGigController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Ambil semua kategori beserta jumlah Gigs di dalamnya
         $categories = Category::withCount(['gigs' => function ($query) {
-            $query->whereHas('user', function ($q) {
-                $q->where('profile_status', 'approved');
+            // Cari Gigs yang pemiliknya (user) memiliki profil freelancer yang sudah di-approve
+            $query->whereHas('user', function ($userQuery) {
+                $userQuery->whereHas('freelancerProfile', function ($profileQuery) {
+                    $profileQuery->where('profile_status', 'approved');
+                });
             });
         }])->get();
 
         // 2. Ambil kategori yang sedang aktif (jika ada)
-        $activeCategory = $request->category ? Category::where('slug', $request->category)->first() : null;
+        // $activeCategory = $request->category ? Category::where('slug', $request->category)->first() : null;
+        $activeCategory = null;
+        if ($request->has('category')) {
+            // Hanya isi jika ada request kategori
+            $activeCategory = Category::where('slug', $request->category)->first();
+            // if ($activeCategory) {
+            //     $gigsQuery->where('category_id', $activeCategory->id);
+        }
 
-        // 3. Query dasar untuk mengambil Gigs
-        $gigsQuery = Gig::whereHas('user', function ($query) {
-            $query->where('role', 'freelancer')->where('profile_status', 'approved');
+
+
+        $gigsQuery = Gig::query()->whereHas('user', function ($userQuery) {
+            $userQuery->whereHas('freelancerProfile', function ($profileQuery) {
+                $profileQuery->where('profile_status', 'approved');
+            });
         });
 
-        // 4. Terapkan filter kategori jika ada
+
         if ($activeCategory) {
             $gigsQuery->where('category_id', $activeCategory->id);
         }
+
+
 
         // 5. Terapkan sorting
         switch ($request->sort) {
@@ -44,6 +58,20 @@ class PublicGigController extends Controller
                 $gigsQuery->latest(); // Default: terbaru
         }
 
+        if ($request->filled('q')) {
+            $searchQuery = $request->q;
+            $gigsQuery->where(function ($query) use ($searchQuery) {
+                $query->where('title', 'like', "%{$searchQuery}%") // Cari di judul Gig
+                      ->orWhere('description', 'like', "%{$searchQuery}%") // Cari di deskripsi Gig
+                      ->orWhereHas('category', function ($q) use ($searchQuery) {
+                          $q->where('name', 'like', "%{$searchQuery}%"); // Cari di nama Kategori
+                      })
+                      ->orWhereHas('user', function ($q) use ($searchQuery) {
+                          $q->where('name', 'like', "%{$searchQuery}%"); // Cari di nama Freelancer
+                      });
+            });
+        }
+
         // 6. Eksekusi query dengan paginasi
         $gigs = $gigsQuery->paginate(9);
 
@@ -52,7 +80,9 @@ class PublicGigController extends Controller
 
     public function show(Gig $gig)
     {
-        if ($gig->user->role !== 'freelancer' || $gig->user->profile_status !== 'approved') {
+        $freelancer = $gig->user;
+
+        if (!$freelancer->freelancerProfile || $freelancer->freelancerProfile->profile_status !== 'approved') {
             abort(404);
         }
 
@@ -60,7 +90,7 @@ class PublicGigController extends Controller
 
         $canReview = false;
         $orderToReview = null;
-        if (Auth::check() && Auth::user()->role == 'client') {
+        if (Auth::check()) {
             // Cari pesanan yang sudah selesai TAPI belum direview oleh user ini untuk gig ini
             $orderToReview = Order::where('client_id', Auth::id())
                 ->where('gig_id', $gig->id)
@@ -73,7 +103,14 @@ class PublicGigController extends Controller
             }
         }
 
+        $pendingOrder = null;
+        if (Auth::check()) {
+            $pendingOrder = Order::where('client_id', Auth::id())
+                                 ->where('gig_id', $gig->id)
+                                 ->where('status', 'pending')
+                                 ->first();
+        }
 
-        return view('public.gigs.show', compact('gig', 'reviews', 'canReview', 'orderToReview'));
+        return view('public.gigs.show', compact('gig', 'reviews', 'canReview', 'orderToReview', 'pendingOrder'));
     }
 }

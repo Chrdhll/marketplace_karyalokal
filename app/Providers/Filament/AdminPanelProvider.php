@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Poppins')
             ->brandName('KaryaLokal')
             ->login()
+            ->authGuard('web')
             ->colors([
                 'danger' => Color::Rose,
                 'gray' => Color::Gray,
@@ -59,13 +60,15 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+
+                \App\Http\Middleware\CheckAdminRole::class, 
             ])
             // ->authMiddleware([
             //     Authenticate::class,
             // ]);
             ->authMiddleware([
                 Authenticate::class,
-                \App\Http\Middleware\CheckAdminRole::class,
+                // \App\Http\Middleware\CheckAdminRole::class,
             ]);
     }
 }
