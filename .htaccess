@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On RewriteCond %{REQUEST_FILENAME} !-f RewriteRule ^(.*)$
+    public/$1 [L]
+</IfModule>
+
+<FIles .env> Order allow,deny Deny from all </FIles>
