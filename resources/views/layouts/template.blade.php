@@ -66,16 +66,25 @@
        @media (max-width: 991.98px) {
 
             /* Perintah untuk container agar menjadi flexbox */
-            .header_area .main_menu .navbar .container {
+            /* .header_area .main_menu .navbar .container {
                 display: flex !important;
                 justify-content: space-between !important;
                 align-items: center !important;
                 width: 100% !important;
-                padding: 15px 15px !important; /* Reset padding aneh */
+                padding: 0%; 
+            } */
+
+            .nav-lurus, .navbar-brand {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                width: 100% !important;
+                padding: 10px 5px ; /* Reset padding aneh */
             }
 
             /* Perintah untuk logo DAN tombol hamburger agar tidak rakus tempat */
-            .header_area .navbar-brand,
+
+            .header_area,
             .header_area .navbar-toggler {
                 width: auto !important; /* Jangan ambil lebar penuh */
                 flex: none !important; /* Hentikan sifat 'flex-grow' */
@@ -248,15 +257,17 @@
         <div class="main_menu">
             <nav class="navbar navbar-expand-lg navbar-light main_box">
                 <div class="container">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                    <a class="navbar-brand logo_h" href="{{ route('index') }}"><img src="/assets/img/logobaru.png"
-                            alt="" style="width: 50%;"></a>
-                    <button class="navbar-toggler" type="button" id="sidebar-toggler"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
+                    <div class="nav-lurus">
+                        <!-- Brand and toggle get grouped for better mobile display -->
+                        <a class="navbar-brand logo_h" href="{{ route('index') }}"><img src="/assets/img/logobaru.png"
+                                alt="" style="width: 50%;"></a>
+                        <button class="navbar-toggler" type="button" id="sidebar-toggler"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
                         <ul class="nav navbar-nav menu_nav ml-auto">
