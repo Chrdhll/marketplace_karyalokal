@@ -65,31 +65,12 @@
        
        @media (max-width: 991.98px) {
 
-            /* Perintah untuk container agar menjadi flexbox */
-            /* .header_area .main_menu .navbar .container {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                width: 100% !important;
-                padding: 0%; 
-            } */
-
             .nav-lurus, .navbar-brand {
                 display: flex !important;
                 justify-content: space-between !important;
                 align-items: center !important;
                 width: 100% !important;
                 padding: 10px 5px ; /* Reset padding aneh */
-            }
-
-            /* Perintah untuk logo DAN tombol hamburger agar tidak rakus tempat */
-
-            .header_area,
-            .header_area .navbar-toggler {
-                width: auto !important; /* Jangan ambil lebar penuh */
-                flex: none !important; /* Hentikan sifat 'flex-grow' */
-                margin: 0 !important; /* Hapus semua margin yang aneh */
-                padding: 0 !important; /* Hapus padding yang aneh */
             }
 
         .sidebar-wrapper {

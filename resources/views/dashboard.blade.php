@@ -116,75 +116,77 @@
                         <p>Temukan produk dan jasa terbaik di KaryaLokal.</p>
                     </div>
                 </div>
-                @forelse ($gigs as $gig)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-product">
-                            <a href="{{ route('public.gigs.show', $gig->slug) }}">
-                                <img class="img-fluid"
-                                    src="{{ $gig->cover_image_path ? Storage::url($gig->cover_image_path) : 'https://via.placeholder.com/300x200' }}"
-                                    alt="{{ $gig->title }}" style="height: 180px; object-fit: cover;">
-                            </a>
-                            <div class="product-details">
-                                <h6>{{ $gig->title }}</h6>
-                                <div class="price d-flex justify-content-between align-items-center">
-                                    <h6 class="l-through mb-0 text-primary font-weight-bold">Rp
-                                        {{ number_format($gig->price, 0, ',', '.') }}</h6>
-                                    <div class="d-flex align-items-center">
-                                        <span style="color: #fbc02d; font-size: 16px;">★</span>
-                                        <span
-                                            style="font-size: 14px; color: #555; margin-left: 4px;">{{ $gig->rating_average ? number_format($gig->rating_average, 1) : 'Baru' }}</span>
+                <div class="row px-2 px-sm-3 px-md-4 px-lg-0">
+                    @forelse ($gigs as $gig)
+                        <div class="col-12 col-lg-4 col-md-6">
+                            <div class="single-product">
+                                <a href="{{ route('public.gigs.show', $gig->slug) }}">
+                                    <img class="img-fluid"
+                                        src="{{ $gig->cover_image_path ? Storage::url($gig->cover_image_path) : 'https://via.placeholder.com/300x200' }}"
+                                        alt="{{ $gig->title }}" style="height: 180px; object-fit: cover;">
+                                </a>
+                                <div class="product-details">
+                                    <h6 class="mb-1">{{ $gig->title }}</h6>
+                                    <div class="price d-flex justify-content-between align-items-center">
+                                        <h6 class="l-through mb-0 text-primary font-weight-bold">Rp
+                                            {{ number_format($gig->price, 0, ',', '.') }}</h6>
+                                        <div class="d-flex align-items-center">
+                                            <span style="color: #fbc02d; font-size: 16px;">★</span>
+                                            <span
+                                                style="font-size: 14px; color: #555; margin-left: 4px;">{{ $gig->rating_average ? number_format($gig->rating_average, 1) : 'Baru' }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="prd-bottom">
+                                    <div class="prd-bottom mt-2">
 
-                                    {{-- IKON 1: LINK BIASA --}}
-                                    <a href="{{ route('public.freelancer.show', $gig->user->username) }}"
-                                        class="social-info">
-                                        <span class="ti-user"></span>
-                                        <p class="hover-text">
-                                            {{ \Illuminate\Support\Str::limit($gig->user->name, 10) }}</p>
-                                    </a>
+                                        {{-- IKON 1: LINK BIASA --}}
+                                        <a href="{{ route('public.freelancer.show', $gig->user->username) }}"
+                                            class="social-info">
+                                            <span class="ti-user"></span>
+                                            <p class="hover-text">
+                                                {{ \Illuminate\Support\Str::limit($gig->user->name, 10) }}</p>
+                                        </a>
 
-                                    {{-- ============================================= --}}
-                                    {{--         IKON 2: WISHLIST (TEKNIK BARU)          --}}
-                                    {{-- ============================================= --}}
+                                        {{-- ============================================= --}}
+                                        {{--         IKON 2: WISHLIST (TEKNIK BARU)          --}}
+                                        {{-- ============================================= --}}
 
-                                    <form id="wishlist-form-{{ $gig->slug }}"
-                                        action="{{ route('wishlist.toggle', $gig->slug) }}" method="POST"
-                                        style="display: none;">
-                                        @csrf
-                                    </form>
+                                        <form id="wishlist-form-{{ $gig->slug }}"
+                                            action="{{ route('wishlist.toggle', $gig->slug) }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
 
-                                    <a href="#" class="social-info"
-                                        onclick="event.preventDefault(); document.getElementById('wishlist-form-{{ $gig->slug }}').submit();">
-                                        @if (auth()->check() && auth()->user()->wishlistedGigs->contains($gig))
-                                            {{-- Tampilan jika sudah di-wishlist --}}
-                                            <span class="fa fa-heart" style="color: red;"></span>
-                                            <p class="hover-text">Hapus</p>
-                                        @else
-                                            {{-- Tampilan jika belum di-wishlist --}}
-                                            <span class="lnr lnr-heart"></span>
-                                            <p class="hover-text">Wishlist</p>
-                                        @endif
-                                    </a>
+                                        <a href="#" class="social-info"
+                                            onclick="event.preventDefault(); document.getElementById('wishlist-form-{{ $gig->slug }}').submit();">
+                                            @if (auth()->check() && auth()->user()->wishlistedGigs->contains($gig))
+                                                {{-- Tampilan jika sudah di-wishlist --}}
+                                                <span class="fa fa-heart" style="color: red;"></span>
+                                                <p class="hover-text">Hapus</p>
+                                            @else
+                                                {{-- Tampilan jika belum di-wishlist --}}
+                                                <span class="lnr lnr-heart"></span>
+                                                <p class="hover-text">Wishlist</p>
+                                            @endif
+                                        </a>
 
-                                    {{-- ============================================= --}}
+                                        {{-- ============================================= --}}
 
-                                    {{-- IKON 3: LINK BIASA --}}
-                                    <a href="{{ route('public.gigs.show', $gig->slug) }}" class="social-info">
-                                        <span class="lnr lnr-move"></span>
-                                        <p class="hover-text">Lihat Jasa</p>
-                                    </a>
+                                        {{-- IKON 3: LINK BIASA --}}
+                                        <a href="{{ route('public.gigs.show', $gig->slug) }}" class="social-info">
+                                            <span class="lnr lnr-move"></span>
+                                            <p class="hover-text">Lihat Jasa</p>
+                                        </a>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @empty
-                    <div class="col-12">
-                        <div class="alert alert-warning">Tidak ada jasa yang ditemukan.</div>
-                    </div>
-                @endforelse
+                    @empty
+                        <div class="col-12">
+                            <div class="alert alert-warning">Tidak ada jasa yang ditemukan.</div>
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
 
@@ -212,22 +214,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row px-2 px-sm-3 px-md-4 px-lg-0">
                         {{-- Perulangan datanya tetap sama --}}
                         @foreach ($freelancers as $freelancer)
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-12 col-sm-6 col-lg-3">
                                 <div class="single-product">
-                                    <a href="{{ route('public.freelancer.show', $gig->user->username) }}">
+                                    <a href="{{ route('public.freelancer.show', $freelancer->username) }}">
                                         <img class="img-fluid"
-                                            src="{{ $freelancer->profile_picture_path ? Storage::url($freelancer->profile_picture_path) : 'https://ui-avatars.com/api/?name=' . urlencode($freelancer->name) . '&background=random' }}"
+                                            src="{{ $freelancer->profile_picture_path
+                                                ? Storage::url($freelancer->profile_picture_path)
+                                                : 'https://ui-avatars.com/api/?name=' . urlencode($freelancer->name) . '&background=random' }}"
                                             alt="{{ $freelancer->name }}"
-                                            style="height: 270px; width: 100%; object-fit: cover;">
+                                            style="height: 260px; width: 100%; object-fit: cover; border-radius: 6px;">
                                     </a>
                                     <div class="product-details">
-                                        <h6>{{ $freelancer->name }}</h6>
+                                        <h6 class="mb-1">{{ $freelancer->name }}</h6>
                                         <div class="price d-flex justify-content-between align-items-center">
                                             <h6 class="l-through mb-0">
-                                                {{ $freelancer->freelancerProfile?->headline ?? 'Freelancer' }}</h6>
+                                                {{ $freelancer->freelancerProfile?->headline ?? 'Freelancer' }}
+                                            </h6>
                                             <div class="d-flex align-items-center">
                                                 <span style="color: #fbc02d; font-size: 16px;">★</span>
                                                 <span style="font-size: 14px; color: #555; margin-left: 4px;">
@@ -235,7 +240,7 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="prd-bottom">
+                                        <div class="prd-bottom mt-2">
                                             <a href="{{ route('public.freelancer.show', $freelancer->username) }}"
                                                 class="social-info">
                                                 <span class="ti-plus"></span>
