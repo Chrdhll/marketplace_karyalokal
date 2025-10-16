@@ -5,7 +5,7 @@
 @section('content')
     <section class="login_box_area section_gap mt-5">
         <div class="container py-8">
-            <h1 class="text-2xl font-bold mb-4">Tambah Jasa (Gig) Baru</h1>
+            <h1 class="text-2xl font-bold mb-4">Tambah Jasa Baru</h1>
 
             <div class="card">
                 <div class="card-body">
