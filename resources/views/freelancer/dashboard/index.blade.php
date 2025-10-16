@@ -139,7 +139,7 @@
                                         <p class="mb-0 text-muted">{{ $order->gig->title }}</p>
                                         <small class="text-muted">{{ $order->created_at->diffForHumans() }}</small>
                                     </div>
-                                    <a href="{{ route('order.show', $order->id) }}"
+                                    <a href="{{ route('order.show', $order->uuid) }}"
                                         class="btn btn-sm btn-light align-self-center">Detail</a>
                                 </div>
                                 @if (!$loop->last)

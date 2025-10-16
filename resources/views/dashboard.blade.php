@@ -15,8 +15,7 @@
                                     Anda hari ini.</p>
                                 <form action="{{ route('public.gigs.index') }}" method="GET" class="mt-4">
                                     <div class="input-group" style="width: 100%;">
-                                        <input type="text" name="q" class="form-control"
-                                            placeholder="Cari jasa..."
+                                        <input type="text" name="q" class="form-control" placeholder="Cari jasa..."
                                             style="border-radius: 0; min-height: 50px; font-size: 16px;">
                                         <div class="input-group-append">
                                             <button class="btn" type="submit"
@@ -218,11 +217,12 @@
                         @foreach ($freelancers as $freelancer)
                             <div class="col-lg-3 col-md-6">
                                 <div class="single-product">
-                                    <img class="img-fluid"
-                                        src="{{ $freelancer->profile_picture_path ? Storage::url($freelancer->profile_picture_path) : 'https://ui-avatars.com/api/?name=' . urlencode($freelancer->name) . '&background=random' }}"
-                                        alt="{{ $freelancer->name }}"
-                                        style="height: 270px; width: 100%; object-fit: cover;">
-
+                                    <a href="{{ route('public.freelancer.show', $gig->user->username) }}">
+                                        <img class="img-fluid"
+                                            src="{{ $freelancer->profile_picture_path ? Storage::url($freelancer->profile_picture_path) : 'https://ui-avatars.com/api/?name=' . urlencode($freelancer->name) . '&background=random' }}"
+                                            alt="{{ $freelancer->name }}"
+                                            style="height: 270px; width: 100%; object-fit: cover;">
+                                    </a>
                                     <div class="product-details">
                                         <h6>{{ $freelancer->name }}</h6>
                                         <div class="price d-flex justify-content-between align-items-center">
@@ -310,8 +310,8 @@
                                 {{-- Tampilan jika tidak ada ulasan sama sekali --}}
                                 <div class="carousel-item active">
                                     <div class="d-flex flex-column align-items-center text-center p-4">
-                                        <h4 class="text-white">Belum Ada Ulasan</h4>
-                                        <p class="text-white">Jadilah yang pertama memberikan ulasan di KaryaLokal!</p>
+                                        <h4 style="color: #333">Belum Ada Ulasan</h4>
+                                        <p style="color: #333">Jadilah yang pertama memberikan ulasan di KaryaLokal!</p>
                                     </div>
                                 </div>
                             @endforelse

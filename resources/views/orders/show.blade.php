@@ -39,7 +39,7 @@
                             <div class="card-body">
                                 <h6>Catatan dari Freelancer:</h6>
                                 <p>{{ $order->delivery_notes ?? 'Tidak ada catatan.' }}</p>
-                                <a href="{{ route('order.download', $order->id) }}" class="btn btn-success"><i
+                                <a href="{{ route('order.download', $order->uuid) }}" class="btn btn-success"><i
                                         class="fa fa-download"></i> Download Hasil</a>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
 
                         {{-- Form Kirim Pesan --}}
                         <div class="card-footer">
-                            <form action="{{ route('order.messages.store', $order->id) }}" method="POST">
+                            <form action="{{ route('order.messages.store', $order->uuid) }}" method="POST">
                                 @csrf
                                 <div class="input-group">
                                     <textarea name="message" class="form-control" placeholder="Ketik pesan Anda..." rows="2" required></textarea>

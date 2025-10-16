@@ -14,14 +14,14 @@ class OrderObserver
     {
         // Cek apakah status BARU SAJA diubah menjadi 'completed'
         if ($order->wasChanged('status') && $order->status === 'completed') {
-            
+
             // Ambil data freelancer yang terhubung dengan pesanan ini
             $freelancer = $order->freelancer;
             $freelancerProfile = $freelancer->freelancerProfile;
 
             // Jika freelancer dan profilnya ada
             if ($freelancer && $freelancerProfile) {
-                
+
                 // Tentukan persentase komisi (10%)
                 $commissionRate = 0.10;
 
@@ -38,7 +38,8 @@ class OrderObserver
                 $freelancerProfile->increment('balance', $freelancerEarning);
 
                 // Catat di log untuk debugging (opsional tapi bagus)
-                Log::info("Pesanan #{$order->id} selesai. Saldo freelancer #{$freelancer->id} ditambah sebesar {$freelancerEarning}.");
+
+                Log::info("Pesanan {$order->order_number} selesai. Saldo freelancer #{$freelancer->id} ditambah sebesar {$freelancerEarning}.");
             }
         }
     }

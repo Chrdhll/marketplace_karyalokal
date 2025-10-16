@@ -56,11 +56,11 @@
                             </div>
                             <div class="col-md-4 text-md-right">
                                 {{-- KOLOM AKSI YANG LEBIH RAPI --}}
-                                <a href="{{ route('order.show', $order->id) }}" class="btn btn-outline-warning mb-2 w-100">
+                                <a href="{{ route('order.show', $order->uuid) }}" class="btn btn-outline-warning mb-2 w-100">
                                     <i class="fa fa-comments"></i> Lihat Detail
                                 </a>
                                 @if ($order->status == 'paid')
-                                    <form action="{{ route('freelancer.orders.updateStatus', $order->id) }}" method="POST">
+                                    <form action="{{ route('freelancer.orders.updateStatus', $order->uuid) }}" method="POST">
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="status" value="in_progress">
@@ -103,7 +103,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="{{ route('freelancer.orders.deliver', $order->id) }}" method="POST"
+                        <form action="{{ route('freelancer.orders.deliver', $order->uuid) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             @method('POST')

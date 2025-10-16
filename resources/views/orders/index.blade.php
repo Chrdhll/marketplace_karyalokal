@@ -64,13 +64,13 @@
                                                 <td>
                                                     <div class="d-flex m-1">
                                                         @if ($order->status == 'pending')
-                                                            <a href="{{ route('payment.show', $order->id) }}"
+                                                            <a href="{{ route('payment.show', $order->uuid) }}"
                                                                 class="btn btn-sm btn-warning mr-1">
                                                                 Lanjutkan Pembayaran
                                                             </a>
 
                                                             {{-- TOMBOL BATAL BARU --}}
-                                                            <form action="{{ route('order.cancel', $order->id) }}"
+                                                            <form action="{{ route('order.cancel', $order->uuid) }}"
                                                                 method="POST"
                                                                 onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?');">
                                                                 @csrf
@@ -81,7 +81,7 @@
                                                         @elseif ($order->status == 'completed')
                                                             {{-- Tombol Download akan selalu muncul jika file ada & pesanan selesai --}}
                                                             @if ($order->delivered_file_path)
-                                                                <a href="{{ route('order.download', $order->id) }}"
+                                                                <a href="{{ route('order.download', $order->uuid) }}"
                                                                     class="btn btn-sm btn-success d-block mr-1">
                                                                     <i class="fa fa-download"></i> Download Hasil
                                                                 </a>
@@ -98,7 +98,7 @@
                                                             @endif
                                                         @else
                                                             {{-- Untuk status lain (pending, in_progress, dll), tampilkan tombol Detail --}}
-                                                            <a href="{{ route('order.show', $order->id) }}"
+                                                            <a href="{{ route('order.show', $order->uuid) }}"
                                                                 class="btn btn-sm btn-outline-primary ml-2">Lihat Detail</a>
                                                         @endif
                                                     </div>
@@ -141,7 +141,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('reviews.store', $order->id) }}" method="POST">
+                    <form action="{{ route('reviews.store', $order->uuid) }}" method="POST">
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">

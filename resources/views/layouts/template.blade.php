@@ -64,8 +64,7 @@
 
        
        @media (max-width: 991.98px) {
-            /* Target yang SANGAT SPESIFIK untuk logo dan tombol */
-            @media (max-width: 991.98px) {
+
             /* Perintah untuk container agar menjadi flexbox */
             .header_area .main_menu .navbar .container {
                 display: flex !important;
@@ -83,7 +82,6 @@
                 margin: 0 !important; /* Hapus semua margin yang aneh */
                 padding: 0 !important; /* Hapus padding yang aneh */
             }
-        }
 
         .sidebar-wrapper {
             position: fixed;
@@ -150,6 +148,7 @@
     </style>
 
     @stack('styles')
+    @stack('scripts')
 </head>
 
 <body>
@@ -225,7 +224,7 @@
     {{-- Overlay untuk background gelap --}}
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-    <div style="position: fixed; top: 100px; right: 20px; z-index: 9999; width: auto;">
+    {{-- <div style="position: fixed; top: 100px; right: 20px; z-index: 9999; width: auto;">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -242,7 +241,7 @@
                 </button>
             </div>
         @endif
-    </div>
+    </div> --}}
 
     <!-- Start Header Area -->
     <header class="header_area sticky-header">
@@ -489,9 +488,9 @@
             registerForm.classList.toggle('d-none');
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-    </script>
+    </script> --}}
     <script src="{{ asset('assets/js/vendor/jquery-2.2.4.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
         integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous">

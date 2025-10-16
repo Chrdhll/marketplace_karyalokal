@@ -31,7 +31,7 @@
                             @auth
                                 {{-- JIKA SUDAH ADA PESANAN PENDING --}}
                                 @if ($pendingOrder)
-                                    <a class="primary-btn" href="{{ route('payment.show', $pendingOrder->id) }}">
+                                    <a class="primary-btn" href="{{ route('payment.show', $pendingOrder->uuid) }}">
                                         Lanjutkan Pembayaran
                                     </a>
                                     <p class="ml-3 text-muted">Anda punya pesanan yang belum dibayar.</p>
@@ -154,7 +154,7 @@
                                         <p>{{ $review->comment }}</p>
                                     </div>
                                 @empty
-                                    <p>Belum ada ulasan untuk jasa ini.</p>
+                                    <p style="color: #555">Belum ada ulasan untuk jasa ini.</p>
                                 @endforelse
                                 <div class="mt-4"> {{ $reviews->links() }} </div>
                             </div>

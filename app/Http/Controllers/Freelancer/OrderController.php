@@ -72,7 +72,7 @@ class OrderController extends Controller
             'status' => $validated['status']
         ]);
 
-        // 5. Redirect kembali dengan pesan sukses
-        return back()->with('success', 'Status pesanan #' . $order->id . ' berhasil diperbarui.');
+        return back()->with('success', 'Pesanan ' . $order->order_number . ' telah berhasil di kerjakan.');
+
     }
 }

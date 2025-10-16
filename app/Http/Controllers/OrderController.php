@@ -39,7 +39,7 @@ class OrderController extends Controller
 
         // Jika sudah ada, jangan buat baru, langsung arahkan ke pembayaran
         if ($pendingOrder) {
-            return redirect()->route('payment.show', $pendingOrder->id);
+            return redirect()->route('payment.show', $pendingOrder->uuid);
         }
 
         // 2. Jika belum ada, buat pesanan baru
@@ -51,7 +51,7 @@ class OrderController extends Controller
         ]);
 
         // 3. Langsung redirect ke halaman pembayaran yang baru
-        return redirect()->route('payment.show', $order->id);
+        return redirect()->route('payment.show', $order->uuid);
     }
 
     public function downloadDelivery(Order $order)
@@ -103,38 +103,38 @@ class OrderController extends Controller
     }
 
     public function showPayment(Order $order)
-{
-    // Keamanan: pastikan user adalah pemilik order
-    if ($order->client_id !== Auth::id()) {
-        abort(403);
+    {
+        // Keamanan: pastikan user adalah pemilik order
+        if ($order->client_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Jika order sudah dibayar, redirect ke daftar pesanan
+        if ($order->status !== 'pending') {
+            return redirect()->route('index')->with('info', 'Pesanan ini sudah diproses.');
+        }
+
+        // Buat ulang Snap Token untuk pembayaran
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+
+        $midtrans_params = [
+            'transaction_details' => [
+                'order_id' => $order->id . '-' . time(),
+                'gross_amount' => $order->total_price,
+            ],
+            'customer_details' => [
+                'first_name' => Auth::user()->name,
+                'email' => Auth::user()->email,
+            ],
+        ];
+        $snapToken = \Midtrans\Snap::getSnapToken($midtrans_params);
+
+        // Gunakan kembali view payment.blade.php
+        return view('orders.payment', compact('snapToken', 'order'));
     }
-    
-    // Jika order sudah dibayar, redirect ke daftar pesanan
-    if ($order->status !== 'pending') {
-        return redirect()->route('index')->with('info', 'Pesanan ini sudah diproses.');
-    }
 
-    // Buat ulang Snap Token untuk pembayaran
-    \Midtrans\Config::$serverKey = config('midtrans.server_key');
-    \Midtrans\Config::$isProduction = config('midtrans.is_production');
-
-    $midtrans_params = [
-        'transaction_details' => [
-            'order_id' => $order->id . '-' . time(),
-            'gross_amount' => $order->total_price,
-        ],
-        'customer_details' => [
-            'first_name' => Auth::user()->name,
-            'email' => Auth::user()->email,
-        ],
-    ];
-    $snapToken = \Midtrans\Snap::getSnapToken($midtrans_params);
-
-    // Gunakan kembali view payment.blade.php
-    return view('orders.payment', compact('snapToken', 'order'));
-}
-
- public function cancel(Order $order)
+    public function cancel(Order $order)
     {
         // 1. Keamanan: Pastikan yang membatalkan adalah Klien dari pesanan ini.
         if ($order->client_id !== Auth::id()) {
@@ -150,6 +150,7 @@ class OrderController extends Controller
         $order->update(['status' => 'cancelled']);
 
         // 4. Redirect kembali ke daftar pesanan dengan pesan sukses
-        return redirect()->route('order.index')->with('success', 'Pesanan #' . $order->id . ' telah berhasil dibatalkan.');
+
+        return redirect()->route('order.index')->with('success', 'Pesanan ' . $order->order_number . ' telah berhasil dibatalkan.');
     }
 }

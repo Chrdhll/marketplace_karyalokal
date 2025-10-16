@@ -13,7 +13,7 @@
             <h1>Selesaikan Pembayaran Anda</h1>
             <p>Pesanan {{ $order->order_number }} telah dibuat. Silakan lanjutkan pembayaran.</p>
             <button id="pay-button" class="btn btn-success btn-lg">Bayar Sekarang</button>
-            <form action="{{ route('order.cancel', $order->id) }}" method="POST" class="mt-3"
+            <form action="{{ route('order.cancel', $order->uuid) }}" method="POST" class="mt-3"
                 onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?');">
                 @csrf
                 @method('DELETE')
