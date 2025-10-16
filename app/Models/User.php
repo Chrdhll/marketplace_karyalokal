@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use Filament\Panel;
+use App\Notifications\CustomVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Notifications\CustomVerifyEmail;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -113,6 +115,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(FreelancerProfile::class, 'user_id');
     }
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Hanya user dengan role 'admin' yang bisa akses panel Filament
+        return $this->role === 'admin';
+    }
 // User bisa punya banyak riwayat penarikan
 public function withdrawals() { return $this->hasMany(Withdrawal::class); }
 }
+
+

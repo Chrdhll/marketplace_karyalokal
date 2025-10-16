@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
@@ -22,10 +23,14 @@ use App\Http\Controllers\Freelancer\ProfilFreelanceController;
 use App\Http\Controllers\Freelancer\OrderController as FreelancerOrderController;
 use App\Http\Controllers\Freelancer\ReviewController as FreelancerReviewController;
 
-
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+    // Route::get('/storage-link', function () {
+    //     Artisan::call('storage-link');
+    //     return 'Storage Linked Succesfull. ';
+    // });
 
 Route::get('/blog', [PageController::class, 'blog'])->name('blog');
 Route::get('/single-product', [PageController::class, 'singleProduct'])->name('single-product');
@@ -113,19 +118,22 @@ Route::middleware(['auth', 'verified'])->prefix('freelancer')->name('freelancer.
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('approved.freelancer');
 
-     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('approved.freelancer');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('approved.freelancer');
     Route::get('/reviews', [FreelancerReviewController::class, 'index'])->name('reviews.index')->middleware('approved.freelancer');
 
- 
+
     Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf')->middleware('approved.freelancer');
     Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel')->middleware('approved.freelancer');
     // routes/web.php
     Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print')->middleware('approved.freelancer');
 
-     // RUTE BARU UNTUK FITUR FINANSIAL
-    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index')->middleware('approved.freelancer');;
-    Route::resource('bank-accounts', BankAccountController::class)->only(['store', 'destroy'])->middleware('approved.freelancer');;
-    Route::post('/withdrawals', [FinanceController::class, 'requestWithdrawal'])->name('withdrawals.request')->middleware('approved.freelancer');;
+    // RUTE BARU UNTUK FITUR FINANSIAL
+    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index')->middleware('approved.freelancer');
+    ;
+    Route::resource('bank-accounts', BankAccountController::class)->only(['store', 'destroy'])->middleware('approved.freelancer');
+    ;
+    Route::post('/withdrawals', [FinanceController::class, 'requestWithdrawal'])->name('withdrawals.request')->middleware('approved.freelancer');
+    ;
 });
 
 Route::get('/auth/google/redirect', [SocialiteController::class, 'redirectToGoogle'])->name('google.redirect');
