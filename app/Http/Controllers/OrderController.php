@@ -15,9 +15,13 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Auth::user()->ordersAsClient()->latest()->paginate(10);
-
-        return view('orders.index', compact('orders'));
+        $user = Auth::user();
+        $orders = $user->ordersAsClient()->latest()->paginate(10);
+        
+        // Tambahkan pengecekan ini
+        $hasPendingOrders = $user->ordersAsClient()->where('status', 'pending')->exists();
+        
+        return view('orders.index', compact('orders', 'hasPendingOrders'));
     }
 
     /**
@@ -31,15 +35,15 @@ class OrderController extends Controller
 
     public function processCheckout(Request $request, Gig $gig)
     {
-        // 1. Cek dulu apakah ada pesanan pending untuk gig ini
+        // 1. Cek dulu apakah ada pesanan pending (logika ini tetap penting!)
         $pendingOrder = Order::where('client_id', Auth::id())
                              ->where('gig_id', $gig->id)
                              ->where('status', 'pending')
                              ->first();
 
-        // Jika sudah ada, jangan buat baru, langsung arahkan ke pembayaran
         if ($pendingOrder) {
-            return redirect()->route('payment.show', $pendingOrder->uuid);
+            // Jika sudah ada, jangan buat baru, langsung arahkan ke daftar pesanan
+            return redirect()->route('order.index')->with('info', 'Anda sudah memiliki pesanan untuk jasa ini. Silakan selesaikan pembayaran.');
         }
 
         // 2. Jika belum ada, buat pesanan baru
@@ -50,8 +54,8 @@ class OrderController extends Controller
             'status' => 'pending',
         ]);
 
-        // 3. Langsung redirect ke halaman pembayaran yang baru
-        return redirect()->route('payment.show', $order->uuid);
+        // 3. Langsung redirect ke halaman "Pesanan Saya"
+        return redirect()->route('order.index')->with('success', 'Pesanan ' . $order->order_number . ' berhasil dibuat! Silakan lakukan pembayaran dan unggah bukti.');
     }
 
     public function downloadDelivery(Order $order)
@@ -102,36 +106,56 @@ class OrderController extends Controller
         return back()->with('success', 'Pesan berhasil terkirim!');
     }
 
-    public function showPayment(Order $order)
+    // public function showPayment(Order $order)
+    // {
+    //     // Keamanan: pastikan user adalah pemilik order
+    //     if ($order->client_id !== Auth::id()) {
+    //         abort(403);
+    //     }
+
+    //     // Jika order sudah dibayar, redirect ke daftar pesanan
+    //     if ($order->status !== 'pending') {
+    //         return redirect()->route('index')->with('info', 'Pesanan ini sudah diproses.');
+    //     }
+
+    //     // Buat ulang Snap Token untuk pembayaran
+    //     \Midtrans\Config::$serverKey = config('midtrans.server_key');
+    //     \Midtrans\Config::$isProduction = config('midtrans.is_production');
+
+    //     $midtrans_params = [
+    //         'transaction_details' => [
+    //             'order_id' => $order->id . '-' . time(),
+    //             'gross_amount' => $order->total_price,
+    //         ],
+    //         'customer_details' => [
+    //             'first_name' => Auth::user()->name,
+    //             'email' => Auth::user()->email,
+    //         ],
+    //     ];
+    //     $snapToken = \Midtrans\Snap::getSnapToken($midtrans_params);
+
+    //     // Gunakan kembali view payment.blade.php
+    //     return view('orders.payment', compact('snapToken', 'order'));
+    // }
+
+    public function uploadProof(Request $request, Order $order)
     {
-        // Keamanan: pastikan user adalah pemilik order
-        if ($order->client_id !== Auth::id()) {
-            abort(403);
+        // Keamanan
+        if ($order->client_id !== Auth::id() || $order->status !== 'pending') {
+            abort(403); 
         }
 
-        // Jika order sudah dibayar, redirect ke daftar pesanan
-        if ($order->status !== 'pending') {
-            return redirect()->route('index')->with('info', 'Pesanan ini sudah diproses.');
-        }
+        $validated = $request->validate([
+            'proof_of_payment' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // Maks 2MB
+        ]);
 
-        // Buat ulang Snap Token untuk pembayaran
-        \Midtrans\Config::$serverKey = config('midtrans.server_key');
-        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+        // Simpan file bukti
+        $path = $request->file('proof_of_payment')->store('proofs', 'public');
+        $order->update([
+            'proof_of_payment' => $path
+        ]);
 
-        $midtrans_params = [
-            'transaction_details' => [
-                'order_id' => $order->id . '-' . time(),
-                'gross_amount' => $order->total_price,
-            ],
-            'customer_details' => [
-                'first_name' => Auth::user()->name,
-                'email' => Auth::user()->email,
-            ],
-        ];
-        $snapToken = \Midtrans\Snap::getSnapToken($midtrans_params);
-
-        // Gunakan kembali view payment.blade.php
-        return view('orders.payment', compact('snapToken', 'order'));
+        return back()->with('success', 'Bukti pembayaran berhasil diunggah. Admin akan segera memverifikasi.');
     }
 
     public function cancel(Order $order)

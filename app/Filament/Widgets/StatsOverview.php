@@ -17,8 +17,13 @@ class StatsOverview extends BaseWidget
         // Menghitung PENDAPATAN BERSIH PLATFORM (Komisi 10%)
         $totalRevenue = Order::where('status', 'completed')->sum('platform_fee');
 
-        // Menghitung jumlah pesanan baru (yang sudah dibayar) bulan ini
-        $newOrdersCount = Order::where('status', 'paid')->whereMonth('created_at', now()->month)->count();
+        // Menghitung jumlah pesanan baru (yang sudah dibayar dan selesai) bulan ini
+        $newOrdersCount = Order::where('status', '!=', 'pending')
+            ->where(function ($query) {
+                $query->where('status', 'completed')->orWhere('status', 'delivered');
+            })
+            ->whereMonth('created_at', now()->month)
+            ->count();
 
         // Menghitung total freelancer yang aktif
         $freelancerCount = User::whereHas('freelancerProfile', function ($query) {

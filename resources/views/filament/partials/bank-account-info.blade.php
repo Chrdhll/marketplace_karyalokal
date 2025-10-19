@@ -1,4 +1,4 @@
-<div class="p-4">
+<div class="p-4 rounded-lg bg-gray-50 text-gray-700">
     <h3 class="text-lg font-bold mb-2">Detail Rekening Bank</h3>
     @forelse ($bankAccounts as $account)
         <div class="mb-3 p-3 rounded-lg bg-gray-100">

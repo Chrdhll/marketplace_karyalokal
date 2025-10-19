@@ -27,10 +27,10 @@ use App\Http\Controllers\Freelancer\ReviewController as FreelancerReviewControll
 //     return view('welcome');
 // });
 
-    // Route::get('/storage-link', function () {
-    //     Artisan::call('storage-link');
-    //     return 'Storage Linked Succesfull. ';
-    // });
+// Route::get('/storage-link', function () {
+//     Artisan::call('storage-link');
+//     return 'Storage Linked Succesfull. ';
+// });
 
 Route::get('/blog', [PageController::class, 'blog'])->name('blog');
 Route::get('/single-product', [PageController::class, 'singleProduct'])->name('single-product');
@@ -48,8 +48,6 @@ Route::get('/gigs/{gig:slug}', [PublicGigController::class, 'show'])->name('publ
 
 Route::get('/gigs', [PublicGigController::class, 'index'])->name('public.gigs.index');
 
-// Route untuk menerima notifikasi dari Midtrans
-Route::post('/midtrans-webhook', [WebhookController::class, 'handle'])->name('midtrans.webhook');
 
 // Route::get('/', function () {
 //     return view('dashboard');
@@ -85,9 +83,7 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::get('/checkout/{gig:slug}', [OrderController::class, 'checkout'])->name('checkout')->middleware('can.order');
     Route::post('/checkout/{gig:slug}', [OrderController::class, 'processCheckout'])->name('checkout.process')->middleware('can.order');
-    Route::get('/payment/{order:uuid}', [OrderController::class, 'showPayment'])->name('payment.show')->middleware('auth');
 
-    Route::get('/payment/{order:uuid}', [OrderController::class, 'showPayment'])->name('payment.show');
     Route::delete('/orders/{order:uuid}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
 
     Route::post('/reviews/{order:uuid}', [ReviewController::class, 'store'])->name('reviews.store');
@@ -102,6 +98,10 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::post('/wishlist/{gig:slug}/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+
+
+    Route::post('/orders/{order:uuid}/upload-proof', [OrderController::class, 'uploadProof'])->name('order.upload-proof');
+
 });
 
 Route::middleware(['auth', 'verified'])->prefix('freelancer')->name('freelancer.')->group(function () {

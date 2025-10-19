@@ -2,42 +2,61 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
-use App\Models\Order;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Order;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Grid;
-use Filament\Infolists\Components\TextEntry;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\OrderResource\Pages;
+
+use Filament\Forms\Components\Grid as FormGrid;
+use Filament\Forms\Components\Section as FormSection;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\FileUpload;
+
+
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Grid as InfolistGrid;
+use Filament\Infolists\Components\Section as InfolistSection;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
+
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+
+    public static function getNavigationBadge(): ?string
+    {
+        // Hitung jumlah order yang statusnya 'pending' DAN sudah ada bukti bayar
+        return static::getModel()::where('status', 'pending')
+                                 ->whereNotNull('proof_of_payment')
+                                 ->count();
+    }
 
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
             ->schema([
-                Section::make('Detail Pesanan')->schema([
-                    Grid::make(2)->schema([
+                InfolistSection::make('Detail Pesanan')->schema([
+                    InfolistGrid::make(2)->schema([
                         TextEntry::make('id')->label('ID Pesanan'),
+                        ImageEntry::make('proof_of_payment') 
+                        ->label('Bukti Pembayaran')
+                        ->disk('public')
+                        ->columnSpanFull(),
                         TextEntry::make('status')
                             ->badge() // <-- Tampilkan sebagai badge
-                            ->color(fn(string $state): string => match ($state) {
+                            ->color(fn (string $state): string => match ($state) {
                                 'pending' => 'gray',
                                 'paid' => 'primary',
                                 'in_progress' => 'warning',
@@ -52,7 +71,6 @@ class OrderResource extends Resource
                         TextEntry::make('client.name')->label('Nama Klien'),
                         TextEntry::make('freelancer.name')->label('Nama Freelancer'),
                         TextEntry::make('created_at')->label('Dipesan Pada')->dateTime(),
-                        TextEntry::make('midtrans_transaction_id')->label('ID Transaksi Midtrans'),
                     ]),
                 ]),
             ]);
@@ -62,51 +80,67 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Informasi Pesanan')->schema([
-                    Grid::make(2)->schema([
-                        TextInput::make('id')
-                            ->label('ID Pesanan')
-                            ->disabled(),
+                FormSection::make('Informasi Pesanan')->schema([
+                   FormGrid::make(3)->schema([
+                // ==========================================
+                // KOLOM KIRI (UTAMA): BUKTI PEMBAYARAN
+                // ==========================================
+                FormSection::make('Bukti Pembayaran Klien')
+                    ->columnSpan(2)
+                    ->schema([
+                        FileUpload::make('proof_of_payment')
+                            ->label('') // Kosongkan label agar gambar terlihat penuh
+                            ->disk('public')
+                            ->disabled() // Admin hanya bisa melihat, tidak bisa mengubah
+                            ->columnSpanFull(),
+                    ]),
 
-                        // INI FIELD YANG BISA DI-EDIT OLEH ADMIN
+                // ==========================================
+                // KOLOM KANAN (SIDEBAR): AKSI ADMIN
+                // ==========================================
+                FormSection::make('Aksi Admin (Verifikasi)')
+                    ->columnSpan(1)
+                    ->schema([
+                        // INI YANG DITONJOLKAN
                         Select::make('status')
+                            ->label('Ubah Status Pesanan')
                             ->options([
-                                'pending' => 'Pending',
-                                'paid' => 'Paid',
-                                'in_progress' => 'In Progress',
-                                'completed' => 'Completed',
-                                'cancelled' => 'Cancelled',
-                                'dispute' => 'Dispute',
+                                'pending' => 'Pending (Menunggu Bukti)',
+                                'paid' => 'Paid (Pembayaran Diterima)',
+                                'in_progress' => 'In Progress (Dikerjakan)',
+                                'completed' => 'Completed (Selesai)',
+                                'cancelled' => 'Cancelled (Dibatalkan)',
+                                'dispute' => 'Dispute (Masalah)',
                             ])
                             ->required(),
 
-                        TextInput::make('gig.title')
-                            ->label('Jasa')
-                            ->disabled()
-                            ->afterStateHydrated(fn($record, $component) => $component->state($record->gig?->title)),
-
-                        TextInput::make('total_price')
-                            ->label('Harga')
-                            ->prefix('Rp')
-                            ->disabled(),
-
-                        TextInput::make('client_name')
+                        // Info tambahan untuk admin
+                        TextInput::make('user_name')
                             ->label('Nama Klien')
                             ->disabled()
-                            ->afterStateHydrated(fn($record, $component) => $component->state($record->client?->name)),
+                            ->afterStateHydrated(fn ($record, $component) => $component->state($record->client?->name)),
 
                         TextInput::make('freelancer_name')
                             ->label('Nama Freelancer')
                             ->disabled()
-                            ->afterStateHydrated(fn($record, $component) => $component->state($record->freelancer?->name)),
+                            ->afterStateHydrated(fn ($record, $component) => $component->state($record->freelancer?->name)),
+
+                        TextInput::make('total_price')
+                            ->label('Harga')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->disabled(),
                     ]),
-                ]),
-            ]);
+            ]),
+        ]),
+    ]);
+
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id')->sortable()->label('ID Pesanan'),
                 TextColumn::make('gig.title')->searchable()->label('Jasa'),
@@ -118,13 +152,17 @@ class OrderResource extends Resource
                     ->money('IDR'),
                 BadgeColumn::make('status')
                     ->colors([
-                        'secondary' => 'pending',
+                        'gray' => 'pending',
                         'primary' => 'paid',
                         'warning' => 'in_progress',
                         'success' => 'completed',
                         'danger' => 'cancelled',
                         'danger' => 'dispute',
                     ]),
+                ImageColumn::make('proof_of_payment')
+            ->label('Bukti Bayar')
+            ->disk('public')
+            ->visibility('private'),
                 TextColumn::make('created_at')->dateTime('d M Y')->sortable()->label('Tanggal Pesan'),
             ])
             ->filters([

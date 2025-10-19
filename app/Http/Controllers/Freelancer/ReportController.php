@@ -34,7 +34,7 @@ class ReportController extends Controller
 
         // Hitung ringkasan statistik dari query yang sudah difilter
         $summary = [
-            'total_revenue' => $ordersQuery->sum('total_price'),
+            'total_revenue' => $ordersQuery->sum('freelancer_earning'),
             'total_orders' => $ordersQuery->count(),
         ];
 
@@ -64,7 +64,7 @@ class ReportController extends Controller
         }
 
         $summary = [
-        'total_revenue' => $ordersQuery->sum('total_price'),
+        'total_revenue' => $ordersQuery->sum('freelancer_earning'),
         'total_orders' => $ordersQuery->count(),
      ];
 
@@ -77,9 +77,7 @@ class ReportController extends Controller
     public function exportExcel(Request $request)
     {
         $user = Auth::user();
-        $filter = $request->get('filter', 'all'); // Defaultnya tampilkan semua
-         // Jalankan query yang sama persis seperti di index() untuk mendapatkan data yang difilter
-        // ... (copy-paste logika query dari index())
+        $filter = $request->get('filter', 'all'); 
         $ordersQuery = $user->ordersAsFreelancer()->where('status', 'completed');
          switch ($filter) {
             case 'week':
@@ -124,7 +122,7 @@ class ReportController extends Controller
 
         // Hitung ringkasan statistik dari query yang sudah difilter
         $summary = [
-            'total_revenue' => $ordersQuery->sum('total_price'),
+            'total_revenue' => $ordersQuery->sum('freelancer_earning'),
             'total_orders' => $ordersQuery->count(),
         ];
 

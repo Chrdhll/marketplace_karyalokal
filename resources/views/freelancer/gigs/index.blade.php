@@ -12,25 +12,6 @@
 
             </div>
 
-            {{-- Notifikasi Sukses/Error --}}
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
-            {{-- 2. Alert Error (jika ditendang oleh middleware) --}}
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
-
             <div class="row">
                 @forelse ($gigs as $gig)
                     <div class="col-md-6 col-lg-4 mb-4">

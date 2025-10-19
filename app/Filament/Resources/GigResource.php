@@ -17,7 +17,7 @@ class GigResource extends Resource
 {
     protected static ?string $model = Gig::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {

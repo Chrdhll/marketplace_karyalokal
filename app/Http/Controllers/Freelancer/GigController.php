@@ -112,7 +112,7 @@ class GigController extends Controller
 
         $gig->update($dataToUpdate);
 
-        return redirect()->route('freelancer.gigs.index')->with('success', 'Jasa (Gig) berhasil diperbarui!');
+        return redirect()->route('freelancer.gigs.index')->with('success', 'Jasa berhasil diperbarui!');
     }
 
     /**
@@ -132,6 +132,6 @@ class GigController extends Controller
 
         $gig->delete();
 
-        return redirect()->route('freelancer.gigs.index')->with('success', 'Jasa (Gig) berhasil dihapus!');
+        return redirect()->route('freelancer.gigs.index')->with('success', 'Jasa berhasil dihapus!');
     }
 }

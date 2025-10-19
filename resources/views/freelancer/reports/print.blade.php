@@ -46,9 +46,41 @@
             </div>
         </div>
 
-        <table class="table table-bordered">
-            {{-- ... (kode thead dan tbody tabel yang sama seperti di reports/index.blade.php) ... --}}
-        </table>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID Pesanan</th>
+                                <th>Tanggal Selesai</th>
+                                <th>Jasa</th>
+                                <th>Klien</th>
+                                <th>Pendapatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($completedOrders as $order)
+                                <tr>
+                                    <td>#{{ $order->uuid }}</td>
+                                    <td>{{ $order->updated_at->format('d M Y') }}</td>
+                                    <td>{{ $order->gig->title }}</td>
+                                    <td>{{ $order->client->name }}</td>
+                                    <td>Rp {{ number_format($order->freelancer_earning, 0, ',', '.') }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">Belum ada pendapatan yang tercatat.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if ($completedOrders->hasPages())
+                <div class="card-footer">{{ $completedOrders->links() }}</div>
+            @endif
+        </div>
     </div>
 </body>
 

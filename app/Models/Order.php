@@ -30,7 +30,8 @@ class Order extends Model
         'delivered_file_path',
         'delivery_notes',
         'platform_fee', 'freelancer_earning',
-        'uuid'
+        'uuid',
+        'proof_of_payment'
     ];
 
     public function gig()

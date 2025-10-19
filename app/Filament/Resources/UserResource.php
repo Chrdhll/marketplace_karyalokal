@@ -110,6 +110,7 @@ class UserResource extends Resource
      public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 ImageColumn::make('profile_picture_path')->label('Foto')->circular(),
                 TextColumn::make('name')

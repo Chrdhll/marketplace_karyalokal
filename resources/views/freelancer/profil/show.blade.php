@@ -17,23 +17,7 @@
                         </div>
                     </div>
 
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-
-                        {{-- 2. Alert Error (jika ditendang oleh middleware) --}}
-                    @elseif (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @elseif (auth()->user()->freelancerProfile?->profile_status == 'pending')
+                    @if (auth()->user()->freelancerProfile?->profile_status == 'pending')
                         <div class="alert alert-warning shadow-sm" role="alert">
                             <h4 class="alert-heading">Menunggu Persetujuan</h4>
                             <p>Profil Anda telah kami terima dan sedang ditinjau oleh tim admin. Anda tidak dapat mengubah
@@ -79,7 +63,7 @@
                                 </div>
                             </div>
                             <hr>
-                            <div class="row mt-4">
+                            <div class="row">
                                 <div class="col-md-6">
                                     <h5 class="mt-3">CV</h5>
                                     @if ($user->freelancerProfile?->cv_file_path)

@@ -7,7 +7,7 @@
     <div class="product_image_area mt-5">
         <div class="container">
             <div class="row s_product_inner">
-                 <div class="col-lg-6">
+                <div class="col-lg-6">
                     {{-- Menampilkan satu gambar utama, karena kita belum punya fitur galeri --}}
                     <div class="single-prd-item">
                         <img class="img-fluid"
@@ -31,11 +31,14 @@
                             @auth
                                 {{-- JIKA SUDAH ADA PESANAN PENDING --}}
                                 @if ($pendingOrder)
-                                    <a class="primary-btn" href="{{ route('payment.show', $pendingOrder->uuid) }}">
-                                        Lanjutkan Pembayaran
-                                    </a>
-                                    <p class="ml-3 text-muted">Anda punya pesanan yang belum dibayar.</p>
-
+                                    <div>
+                                        <a class="primary-btn m-0" href="{{ route('order.index') }}">
+                                            Selesaikan Pembayaran
+                                        </a>
+                                        <br>
+                                        <p class="text-muted m-0">Anda punya pesanan yang belum dibayar.<br>Silakan cek halaman
+                                            "Pesanan Saya" untuk membayar.</p>
+                                    </div>  
                                     {{-- JIKA USER ADALAH KLIEN & BUKAN PEMILIK --}}
                                 @elseif (auth()->id() !== $gig->user_id)
                                     <a class="primary-btn" href="{{ route('checkout', $gig->slug) }}">Pesan Jasa Ini</a>

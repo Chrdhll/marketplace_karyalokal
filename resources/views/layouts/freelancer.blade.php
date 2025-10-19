@@ -173,6 +173,7 @@
 </head>
 
 <body>
+    @include('partials.global-alerts')
     <div class="sidebar-wrapper" id="sidebar-wrapper">
         <div class="sidebar-header">
             <h5>Menu Utama</h5>

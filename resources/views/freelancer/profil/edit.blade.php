@@ -4,23 +4,6 @@
 @section('content')
     <section class="section_gap mt-5">
         <div class="container">
-
-            {{-- Notifikasi --}}
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                </div>
-            @endif
-
             {{-- Pesan Sambutan untuk User Baru --}}
             @if (!auth()->user()->freelancerProfile)
                 <div class="alert alert-info shadow-sm mb-4">
@@ -120,7 +103,6 @@
 
                                 <div class="col-md-6 form-group">
                                     <label for="portfolio" class="font-weight-bold">
-
                                         {{ $isFirstSubmission ? 'Upload Portofolio (PDF)' : 'Ganti Portofolio (Opsional)' }}
                                         @if ($isFirstSubmission)
                                             <span class="text-danger">*</span>
@@ -140,7 +122,6 @@
                                         <small class="form-text text-muted mt-2">Portofolio saat ini: <a
                                                 href="{{ Storage::url($user->freelancerProfile?->portfolio) }}"
                                                 target="_blank">Lihat
-
                                                 Portofolio</a></small>
                                     @endif
 

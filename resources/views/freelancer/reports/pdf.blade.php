@@ -21,7 +21,7 @@
                 <td>{{ $order->updated_at->format('d M Y') }}</td>
                 <td>{{ $order->gig->title }}</td>
                 <td>{{ $order->client->name }}</td>
-                <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($order->freelancer_earning, 0, ',', '.') }}</td>
             </tr>
             @endforeach
         </tbody>

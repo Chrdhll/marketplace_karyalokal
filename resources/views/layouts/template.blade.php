@@ -142,6 +142,7 @@
 </head>
 
 <body>
+     @include('partials.global-alerts')
 
      <div class="sidebar-wrapper" id="sidebar-wrapper">
         <div class="sidebar-header">
@@ -564,6 +565,20 @@
             if (typeof $ !== 'undefined' && $('.filter-nice-select').length) {
                 $('.filter-nice-select').niceSelect();
             }
+
+            document.querySelectorAll('.custom-file-input').forEach(function(input) {
+                input.addEventListener('change', function(e) {
+                    // Ambil nama file
+                    let fileName = e.target.files[0] ? e.target.files[0].name : 'Pilih file...';
+
+                    // Cari label yang terkait
+                    let nextSibling = e.target.nextElementSibling;
+                    if (nextSibling && nextSibling.classList.contains('custom-file-label')) {
+                        // Tulis nama file ke dalam label
+                        nextSibling.innerText = fileName;
+                    }
+                });
+            });
         });
     </script>
 

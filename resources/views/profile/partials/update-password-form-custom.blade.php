@@ -10,21 +10,23 @@
             @method('put')
 
             @if (auth()->user()->password)
-                <div class="form-group">
-                    <label for="current_password">Password Saat Ini</label>
-                    <div class="input-group" style="width: 36rem">
-                        <input id="current_password" name="current_password" type="password" class="form-control"
-                            autocomplete="current-password">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary toggle-password" type="button"
-                                data-target="current_password">
-                                <i class="fa fa-eye"></i>
-                            </button>
+                <div class="col-lg-6 col-md-12">
+                    <div class="form-group">
+                        <label for="current_password">Password Saat Ini</label>
+                        <div class="input-group">
+                            <input id="current_password" name="current_password" type="password" class="form-control"
+                                autocomplete="current-password">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary toggle-password" type="button"
+                                    data-target="current_password">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
+                        @error('current_password', 'updatePassword')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
-                    @error('current_password', 'updatePassword')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
                 </div>
             @endif
 

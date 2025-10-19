@@ -11,15 +11,6 @@
                 {{-- Tambahkan filter di sini nanti jika perlu --}}
             </div>
 
-            {{-- Notifikasi --}}
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                </div>
-            @endif
-
             {{-- ============================================= --}}
             {{--          DAFTAR PESANAN GAYA BARU (KARTU)         --}}
             {{-- ============================================= --}}

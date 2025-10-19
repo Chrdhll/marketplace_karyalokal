@@ -62,59 +62,61 @@
                         </div>
                     @endif
 
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-header">
-                            <h5>Ruang Diskusi</h5>
-                        </div>
-                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                            {{-- Histori Chat --}}
-                            @forelse ($order->messages as $message)
-                                {{-- Cek apakah pengirim adalah user yang sedang login --}}
-                                @if ($message->user_id == auth()->id())
-                                    {{-- Pesan Milik Sendiri (rata kanan) --}}
-                                    <div class="d-flex justify-content-end mb-3">
-                                        <div class="p-3"
-                                            style="background-color: #e1f5fe; border-radius: 15px 15px 0 15px; max-width: 80%;">
-                                            <strong>Anda:</strong>
-                                            <p class="mb-0">{{ $message->message }}</p>
-                                            <small
-                                                class="text-muted">{{ $message->created_at->format('d M, H:i') }}</small>
+                    <div class="d-none d-lg-block">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header">
+                                <h5>Ruang Diskusi</h5>
+                            </div>
+                            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                {{-- Histori Chat --}}
+                                @forelse ($order->messages as $message)
+                                    {{-- Cek apakah pengirim adalah user yang sedang login --}}
+                                    @if ($message->user_id == auth()->id())
+                                        {{-- Pesan Milik Sendiri (rata kanan) --}}
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <div class="p-3"
+                                                style="background-color: #e1f5fe; border-radius: 15px 15px 0 15px; max-width: 80%;">
+                                                <strong>Anda:</strong>
+                                                <p class="mb-0">{{ $message->message }}</p>
+                                                <small
+                                                    class="text-muted">{{ $message->created_at->format('d M, H:i') }}</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                @else
-                                    {{-- Pesan Milik Orang Lain (rata kiri) --}}
-                                    <div class="d-flex justify-content-start mb-3">
-                                        <div class="p-3"
-                                            style="background-color: #f1f1f1; border-radius: 15px 15px 15px 0; max-width: 80%;">
-                                            <strong>{{ $message->user->name }}:</strong>
-                                            <p class="mb-0">{{ $message->message }}</p>
-                                            <small
-                                                class="text-muted">{{ $message->created_at->format('d M, H:i') }}</small>
+                                    @else
+                                        {{-- Pesan Milik Orang Lain (rata kiri) --}}
+                                        <div class="d-flex justify-content-start mb-3">
+                                            <div class="p-3"
+                                                style="background-color: #f1f1f1; border-radius: 15px 15px 15px 0; max-width: 80%;">
+                                                <strong>{{ $message->user->name }}:</strong>
+                                                <p class="mb-0">{{ $message->message }}</p>
+                                                <small
+                                                    class="text-muted">{{ $message->created_at->format('d M, H:i') }}</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                @endif
-                            @empty
-                                <p class="text-center text-muted">Belum ada pesan dalam diskusi ini.</p>
-                            @endforelse
-                        </div>
+                                    @endif
+                                @empty
+                                    <p class="text-center text-muted">Belum ada pesan dalam diskusi ini.</p>
+                                @endforelse
+                            </div>
 
-                        {{-- Form Kirim Pesan --}}
-                        <div class="card-footer">
-                            <form action="{{ route('order.messages.store', $order->uuid) }}" method="POST">
-                                @csrf
-                                <div class="input-group">
-                                    <textarea name="message" class="form-control" placeholder="Ketik pesan Anda..." rows="2" required></textarea>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="submit">Kirim</button>
+                            {{-- Form Kirim Pesan --}}
+                            <div class="card-footer">
+                                <form action="{{ route('order.messages.store', $order->uuid) }}" method="POST">
+                                    @csrf
+                                    <div class="input-group">
+                                        <textarea name="message" class="form-control" placeholder="Ketik pesan Anda..." rows="2" style="height: 40px;"  required></textarea>
+                                        <div class="input-group-append"> 
+                                            <button class="btn btn-primary" type="submit">Kirim</button>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="card shadow-sm">
+                    <div class="card shadow-sm mb-4">
                         <div class="card-header">
                             <h5>Ringkasan</h5>
                         </div>
@@ -129,6 +131,59 @@
                             <p><strong>Freelancer:</strong> {{ $order->freelancer->name }}</p>
                         </div>
                     </div>
+                    
+                    <div class="d-block d-lg-none">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header">
+                                <h5>Ruang Diskusi</h5>
+                            </div>
+                            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                {{-- Histori Chat --}}
+                                @forelse ($order->messages as $message)
+                                    {{-- Cek apakah pengirim adalah user yang sedang login --}}
+                                    @if ($message->user_id == auth()->id())
+                                        {{-- Pesan Milik Sendiri (rata kanan) --}}
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <div class="p-3"
+                                                style="background-color: #e1f5fe; border-radius: 15px 15px 0 15px; max-width: 80%;">
+                                                <strong>Anda:</strong>
+                                                <p class="mb-0">{{ $message->message }}</p>
+                                                <small
+                                                    class="text-muted">{{ $message->created_at->format('d M, H:i') }}</small>
+                                            </div>
+                                        </div>
+                                    @else
+                                        {{-- Pesan Milik Orang Lain (rata kiri) --}}
+                                        <div class="d-flex justify-content-start mb-3">
+                                            <div class="p-3"
+                                                style="background-color: #f1f1f1; border-radius: 15px 15px 15px 0; max-width: 80%;">
+                                                <strong>{{ $message->user->name }}:</strong>
+                                                <p class="mb-0">{{ $message->message }}</p>
+                                                <small
+                                                    class="text-muted">{{ $message->created_at->format('d M, H:i') }}</small>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @empty
+                                    <p class="text-center text-muted">Belum ada pesan dalam diskusi ini.</p>
+                                @endforelse
+                            </div>
+
+                            {{-- Form Kirim Pesan --}}
+                            <div class="card-footer">
+                                <form action="{{ route('order.messages.store', $order->uuid) }}" method="POST">
+                                    @csrf
+                                    <div class="input-group">
+                                        <textarea name="message" class="form-control" placeholder="Ketik pesan Anda..." rows="2" style="height: 40px;"  required></textarea>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="submit">Kirim</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+    
                 </div>
             </div>
         </div>
