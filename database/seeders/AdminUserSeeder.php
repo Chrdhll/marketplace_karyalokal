@@ -16,11 +16,40 @@ class AdminUserSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
-            'username' => 'admin', // <-- Pastikan username unik
+            'username' => 'admin',
             'email' => 'admin@karyalokal.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('12345'), // <-- Ganti dengan password yang aman
+            'password' => Hash::make('12345'),
             'role' => 'admin',
+        ]);
+
+
+
+        User::create([
+            'name' => 'Rizky Pratama',
+            'username' => 'rizky',
+            'email' => 'rizkypratama@gmail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password123'),
+            'role' => 'client',
+        ]);
+
+        User::create([
+            'name' => 'Nadia Salsabila',
+            'username' => 'nadia_s',
+            'email' => 'nadiasalsabila@gmail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password123'),
+            'role' => 'client',
+        ]);
+
+        User::create([
+            'name' => 'Arif Wijaya',
+            'username' => 'arif wijaya',
+            'email' => 'arifwijaya@gmail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password123'),
+            'role' => 'client',
         ]);
     }
 }

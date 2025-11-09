@@ -45,16 +45,16 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        session()->regenerate(); // <-- INI PERBAIKANNYA
+        session()->regenerate();
 
         $user = Auth::user();
 
         if ($user->role == 'admin') {
-            return redirect()->intended('/admin'); // Arahkan admin ke panel Filament
+             return redirect()->route('filament.admin.pages.dashboard');
         }
 
         if ($user->role == 'freelancer') {
-            return redirect()->intended(route('freelancer.dashboard')); // Arahkan freelancer ke dashboard baru
+            return redirect()->intended(route('freelancer.dashboard'));
         }
 
         // Jika bukan keduanya (berarti client), arahkan ke tujuan default

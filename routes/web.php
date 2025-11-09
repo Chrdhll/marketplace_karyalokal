@@ -102,6 +102,9 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::post('/orders/{order:uuid}/upload-proof', [OrderController::class, 'uploadProof'])->name('order.upload-proof');
 
+    Route::get('/orders/{order:uuid}/invoice', [OrderController::class, 'downloadInvoice'])->name('order.invoice');
+
+
 });
 
 Route::middleware(['auth', 'verified'])->prefix('freelancer')->name('freelancer.')->group(function () {

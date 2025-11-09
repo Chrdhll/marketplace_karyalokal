@@ -29,6 +29,12 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ImageEntry;
 
 
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
+
+
+
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
@@ -180,7 +186,15 @@ class OrderResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
 
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Proses'),
+
+                Action::make('downloadInvoice')
+                ->label('Download Nota')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('gray')
+                ->url(fn (Order $record): string => route('order.invoice', $record->uuid))
+                ->openUrlInNewTab()
+                ->visible(fn (Order $record): bool => !in_array($record->status, ['pending', 'cancelled'])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

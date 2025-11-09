@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
+
 class OrderController extends Controller
 {
     /**
@@ -17,10 +20,10 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         $orders = $user->ordersAsClient()->latest()->paginate(10);
-        
+
         // Tambahkan pengecekan ini
         $hasPendingOrders = $user->ordersAsClient()->where('status', 'pending')->exists();
-        
+
         return view('orders.index', compact('orders', 'hasPendingOrders'));
     }
 
@@ -142,7 +145,7 @@ class OrderController extends Controller
     {
         // Keamanan
         if ($order->client_id !== Auth::id() || $order->status !== 'pending') {
-            abort(403); 
+            abort(403);
         }
 
         $validated = $request->validate([
@@ -176,5 +179,29 @@ class OrderController extends Controller
         // 4. Redirect kembali ke daftar pesanan dengan pesan sukses
 
         return redirect()->route('order.index')->with('success', 'Pesanan ' . $order->order_number . ' telah berhasil dibatalkan.');
+    }
+
+    public function downloadInvoice(Order $order)
+    {
+        // 1. Keamanan: Pastikan hanya klien dari pesanan ini yang bisa download
+        if ($order->client_id !== Auth::id()) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        // 2. Keamanan: Jangan berikan nota jika belum lunas
+        if ($order->status === 'pending' || $order->status === 'cancelled') {
+            return redirect()->route('order.index')->with('error', 'Nota belum tersedia untuk pesanan ini.');
+        }
+
+        // 3. Ambil semua data yang dibutuhkan
+        $order->load('gig', 'client', 'freelancer');
+
+        // 4. Buat PDF-nya
+        $pdf = Pdf::loadView('pdf.invoice', compact('order'));
+
+        // 5. Tentukan nama file
+        $filename = 'Nota-' . $order->order_number . '.pdf';
+
+        return $pdf->stream($filename);
     }
 }
