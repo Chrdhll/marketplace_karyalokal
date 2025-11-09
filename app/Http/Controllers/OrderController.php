@@ -7,9 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
 use Barryvdh\DomPDF\Facade\Pdf;
-
 
 class OrderController extends Controller
 {
@@ -183,10 +181,15 @@ class OrderController extends Controller
 
     public function downloadInvoice(Order $order)
     {
+
+        $user = Auth::user();
+
         // 1. Keamanan: Pastikan hanya klien dari pesanan ini yang bisa download
-        if ($order->client_id !== Auth::id()) {
+
+        if ($user->id !== $order->client_id && $user->role !== 'admin') {
             abort(403, 'AKSES DITOLAK');
         }
+
 
         // 2. Keamanan: Jangan berikan nota jika belum lunas
         if ($order->status === 'pending' || $order->status === 'cancelled') {
