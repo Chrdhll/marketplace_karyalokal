@@ -14,26 +14,23 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\OrderResource\Pages;
-
 use Filament\Forms\Components\Grid as FormGrid;
 use Filament\Forms\Components\Section as FormSection;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
-
-
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Grid as InfolistGrid;
 use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ImageEntry;
-
-
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
+use Barryvdh\DomPDF\Facade\Pdf;
+use ZipArchive;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
-
-
 
 class OrderResource extends Resource
 {
@@ -56,7 +53,7 @@ class OrderResource extends Resource
                 InfolistSection::make('Detail Pesanan')->schema([
                     InfolistGrid::make(2)->schema([
                         TextEntry::make('id')->label('ID Pesanan'),
-                        ImageEntry::make('proof_of_payment') 
+                        ImageEntry::make('proof_of_payment')
                         ->label('Bukti Pembayaran')
                         ->disk('public')
                         ->columnSpanFull(),
@@ -200,6 +197,48 @@ class OrderResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+
+                BulkAction::make('downloadInvoices')
+                    ->label('Download Nota Terpilih (ZIP)')
+                    ->icon('heroicon-o-archive-box-arrow-down')
+                    ->action(function (Collection $records) {
+
+                        // 1. Buat nama file ZIP yang unik
+                        $zipFileName = 'semua-nota-' . now()->format('Y-m-d-His') . '.zip';
+                        $zipPath = storage_path('app/temp/' . $zipFileName); // Simpan sementara
+
+                        // 2. Buat file ZIP baru
+                        $zip = new ZipArchive();
+                        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+                            throw new \Exception("Gagal membuat file ZIP di server.");
+                        }
+
+                        // 3. Loop setiap pesanan yang dicentang
+                        foreach ($records as $order) {
+                            // Lewati jika pesanan belum lunas
+                            if (in_array($order->status, ['pending', 'cancelled'])) {
+                                continue;
+                            }
+
+                            // 4. Muat data yang dibutuhkan untuk nota
+                            $order->load('gig', 'client', 'freelancer');
+
+                            // 5. Generate PDF-nya
+                            $pdf = Pdf::loadView('pdf.invoice', compact('order'));
+                            $pdfContent = $pdf->output(); // Ambil konten PDF sebagai string
+
+                            // 6. Tambahkan PDF ke file ZIP
+                            $invoiceName = 'Nota-' . $order->order_number . '.pdf';
+                            $zip->addFromString($invoiceName, $pdfContent);
+                        }
+
+                        // 7. Selesaikan dan tutup file ZIP
+                        $zip->close();
+
+                        // 8. Kirim file ZIP sebagai download, lalu hapus otomatis
+                        return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
+                    })
+                    ->deselectRecordsAfterCompletion(), // Hilangkan centang setelah selesai
             ]);
     }
 
