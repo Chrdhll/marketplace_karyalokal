@@ -118,15 +118,24 @@ class OrderResource extends Resource
                             ->required(),
 
                         // Info tambahan untuk admin
-                        TextInput::make('user_name')
+                        TextInput::make('client_name')
                             ->label('Nama Klien')
                             ->disabled()
-                            ->afterStateHydrated(fn ($record, $component) => $component->state($record->client?->name)),
+                            ->afterStateHydrated(function ($record, $component) {
+                                // Hanya jalankan jika $record-nya ada (bukan halaman create)
+                                if ($record) {
+                                    $component->state($record->client?->name);
+                                }
+                            }),
 
                         TextInput::make('freelancer_name')
                             ->label('Nama Freelancer')
                             ->disabled()
-                            ->afterStateHydrated(fn ($record, $component) => $component->state($record->freelancer?->name)),
+                            ->afterStateHydrated(function ($record, $component) {
+                                if ($record) {
+                                    $component->state($record->freelancer?->name);
+                                }
+                            }),
 
                         TextInput::make('total_price')
                             ->label('Harga')
@@ -205,7 +214,13 @@ class OrderResource extends Resource
 
                         // 1. Buat nama file ZIP yang unik
                         $zipFileName = 'semua-nota-' . now()->format('Y-m-d-His') . '.zip';
-                        $zipPath = storage_path('app/temp/' . $zipFileName); // Simpan sementara
+
+                        $tempDir = storage_path('app/public/temp');
+                        if (!is_dir($tempDir)) {
+                            mkdir($tempDir, 0755, true);
+                        }
+                        $zipPath = $tempDir . '/' . $zipFileName;
+
 
                         // 2. Buat file ZIP baru
                         $zip = new ZipArchive();
